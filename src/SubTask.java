@@ -1,12 +1,11 @@
-import java.util.Arrays;
 import java.util.Objects;
 
 public class SubTask extends Task{
     private final int idEpic;
 
-    public SubTask(String title, String description, boolean[] isStatus, int idEpic) {
+    public SubTask(String title, String description, int idEpic) {
 
-        super(title, description, isStatus);
+        super(title, description);
 
         this.idEpic = idEpic;
     }
@@ -22,7 +21,7 @@ public class SubTask extends Task{
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", taskId=" + taskId +
-                ", isStatus=" + Arrays.toString(isStatus) +
+                ", isStatus=" + status +
                 '}';
     }
 

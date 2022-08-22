@@ -1,17 +1,16 @@
-import java.util.Arrays;
 import java.util.Objects;
 
 public class Task {
     protected String title;
     protected String description;
     protected int taskId;
-    protected boolean[] isStatus;
+    protected StatusTask status;
 
 
-    public Task(String title, String description, boolean[] isStatus) {
+    public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.isStatus = isStatus;
+        this.status = StatusTask.NEW;
     }
 
     public String getTitle() {
@@ -38,12 +37,12 @@ public class Task {
         this.taskId = taskId;
     }
 
-    public boolean[] getIsStatus() {
-        return isStatus;
+    public StatusTask getIsStatus() {
+        return status;
     }
 
-    public void setIsStatus(boolean[] isStatus) {
-        this.isStatus = isStatus;
+    public void setStatus(StatusTask status) {
+        this.status = status;
     }
 
     @Override
@@ -54,13 +53,13 @@ public class Task {
         return taskId == task.taskId
                 && Objects.equals(title, task.title)
                 && Objects.equals(description, task.description)
-                && Arrays.equals(isStatus, task.isStatus);
+                && Objects.equals(status, task.status);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(title, description, taskId);
-        result = 31 * result + Arrays.hashCode(isStatus);
+        int result = Objects.hash(title, description, taskId, status);
+
         return result;
     }
 
@@ -70,7 +69,7 @@ public class Task {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", taskId=" + taskId +
-                ", isStatus=" + Arrays.toString(isStatus) +
+                ", status=" + status +
                 '}';
     }
 }

@@ -1,13 +1,12 @@
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class Epic extends Task{
     private final HashMap<Integer, SubTask> subTasks;
 
-    public Epic(String title, String description, boolean[] isStatus) {
+    public Epic(String title, String description) {
 
-        super(title, description, isStatus);
+        super(title, description);
 
         subTasks = new HashMap<>();
     }
@@ -16,8 +15,8 @@ public class Epic extends Task{
         return subTasks;
     }
 
-    public void setSubTasks(SubTask subTask, int id) {
-        subTasks.put(id, subTask);
+    public void setSubTasks(SubTask subTask) {
+        subTasks.put(subTask.getTaskId(), subTask);
     }
 
 
@@ -37,12 +36,13 @@ public class Epic extends Task{
 
     @Override
     public String toString() {
+
         return "Epic{" +
                 "subTasks=" + subTasks +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", taskId=" + taskId +
-                ", isStatus=" + Arrays.toString(isStatus) +
+                ", isStatus=" + status +
                 '}';
     }
 }
