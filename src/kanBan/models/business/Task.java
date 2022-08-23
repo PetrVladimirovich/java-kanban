@@ -1,4 +1,7 @@
+package kanBan.models.business;
+
 import java.util.Objects;
+import kanBan.models.enums.StatusTask;
 
 public class Task {
     protected String title;
@@ -65,11 +68,9 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", taskId=" + taskId +
-                ", status=" + status +
-                '}';
+        return "Задача " + title
+                + "   ID: " + taskId
+                + "    status: " + status
+                + "\n    Описание: [" + description + " ]\n";
     }
 }

@@ -1,6 +1,13 @@
+package kanBan.services.manager;
+
 import java.util.HashMap;
+import kanBan.models.business.*;
+import kanBan.models.enums.StatusTask;
 
 public class TasksManager {
+    private final String ANSI_RESET = "\u001B[0m";
+    private final String ANSI_RED = "\u001B[31m";
+
     private int identifier;
     private final HashMap<Integer, Task> tasks;
     private final HashMap<Integer, SubTask> subTasks;
@@ -10,6 +17,43 @@ public class TasksManager {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epics = new HashMap<>();
+    }
+
+    public void printTasks() {
+
+        for (Task task : tasks.values()) {
+            System.out.println(task);
+        }
+
+        System.out.println();
+
+    }
+
+    public void printSubTasks() {
+
+        for (SubTask subTask : subTasks.values()) {
+            System.out.println(subTask);
+        }
+
+        System.out.println();
+
+    }
+
+    public void printEpics() {
+
+        for (Epic epic : epics.values()) {
+
+            System.out.println(epic);
+
+            for (SubTask subTask : epic.getSubTasks().values()) {
+
+                System.out.println("    " + subTask);
+
+            }
+
+            System.out.println();
+
+        }
     }
 
     public HashMap<Integer, Task> getTasks() {
@@ -28,7 +72,7 @@ public class TasksManager {
 
         if (tasks == null) {
 
-            System.out.println("Невозможно передать такой объект!");
+            System.out.println(ANSI_RED + "deletingTasks: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
             return;
         }
 
@@ -39,7 +83,7 @@ public class TasksManager {
 
         if (subTasks == null) {
 
-            System.out.println("Невозможно передать такой объект!");
+            System.out.println(ANSI_RED + "deletingSubTasks: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
             return;
         }
 
@@ -50,7 +94,7 @@ public class TasksManager {
 
         if (epics == null) {
 
-            System.out.println("Невозможно передать такой объект!");
+            System.out.println(ANSI_RED + "deletingEpics: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
             return;
         }
 
@@ -67,7 +111,7 @@ public class TasksManager {
 
         } else {
 
-            System.out.println("Нет такого ID!");
+            System.out.println(ANSI_RED + "getByTaskId: --> Нет такого ID! <--\n" + ANSI_RESET);
 
         }
 
@@ -84,7 +128,7 @@ public class TasksManager {
 
         } else {
 
-            System.out.println("Нет такого ID!");
+            System.out.println(ANSI_RED + "getBySubTaskId: --> Нет такого ID! <--\n" + ANSI_RESET);
 
         }
 
@@ -101,18 +145,18 @@ public class TasksManager {
 
         } else {
 
-            System.out.println("Нет такого ID!");
+            System.out.println(ANSI_RED + "getByEpicId: --> Нет такого ID! <--\n" + ANSI_RESET);
 
         }
 
         return task;
     }
 
-    public void creatingTask(Task task) {
+    public Task creatingTask(Task task) {
 
         if (task == null) {
-            System.out.println("Невозможно создать такой объект!");
-            return;
+            System.out.println(ANSI_RED + "creatingTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
+            return null;
         }
 
         identifier++;
@@ -120,13 +164,15 @@ public class TasksManager {
         task.setTaskId(identifier);
 
         tasks.put(identifier, task);
+
+        return task;
     }
 
-    public void creatingEpic(Epic epic) {
+    public Epic creatingEpic(Epic epic) {
 
         if (epic == null) {
-            System.out.println("Невозможно создать такой объект!");
-            return;
+            System.out.println(ANSI_RED + "creatingEpic: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
+            return null;
         }
 
         identifier++;
@@ -134,13 +180,15 @@ public class TasksManager {
         epic.setTaskId(identifier);
 
         epics.put(identifier, epic);
+
+        return epic;
     }
 
-    public void creatingSubTask(SubTask subTask) {
+    public SubTask creatingSubTask(SubTask subTask) {
 
         if (subTask == null) {
-            System.out.println("Невозможно создать такой объект!");
-            return;
+            System.out.println(ANSI_RED + "creatingSubTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
+            return null;
         }
 
         identifier++;
@@ -153,20 +201,20 @@ public class TasksManager {
 
         currentEpic.setSubTasks(subTask);
 
-        checkingStatusEpic(subTask.getIdEpic());
+        return subTask;
     }
 
     private void checkingStatusEpic(int idEpic) {
 
         if (!epics.containsKey(idEpic)) {
-            System.out.println("Нет эпика с таким ID!");
+            System.out.println(ANSI_RED + "checkingStatusEpic: --> Нет эпика с таким ID! <--\n" + ANSI_RESET);
             return;
         }
 
         Epic currentEpic = epics.get(idEpic);
 
         if (currentEpic.getSubTasks().isEmpty()) {
-            currentEpic.status = StatusTask.NEW;
+            currentEpic.setStatus(StatusTask.NEW);
             return;
         }
 
@@ -175,10 +223,10 @@ public class TasksManager {
 
         for (SubTask subTask : currentEpic.getSubTasks().values()) {
 
-            if (subTask.status.equals(StatusTask.DONE)) {
+            if (subTask.getIsStatus().equals(StatusTask.DONE)) {
                 countDone++;
 
-            }else if (subTask.status.equals(StatusTask.NEW)) {
+            }else if (subTask.getIsStatus().equals(StatusTask.NEW)) {
                 countNew++;
 
             }
@@ -186,15 +234,15 @@ public class TasksManager {
 
         if (currentEpic.getSubTasks().size() == countDone) {
 
-            currentEpic.status = StatusTask.DONE;
+            currentEpic.setStatus(StatusTask.DONE);
 
         }else if (currentEpic.getSubTasks().size() == countNew) {
 
-            currentEpic.status = StatusTask.NEW;
+            currentEpic.setStatus(StatusTask.NEW);
 
         }else {
 
-            currentEpic.status = StatusTask.IN_PROGRESS;
+            currentEpic.setStatus(StatusTask.IN_PROGRESS);
 
         }
     }
@@ -242,7 +290,7 @@ public class TasksManager {
 
         } else {
 
-            System.out.println("Такого ID нету!");
+            System.out.println(ANSI_RED + "deletingByIdentifier: --> Такого ID: " + id + " нету! <--\n" + ANSI_RESET);
 
         }
     }
@@ -256,7 +304,7 @@ public class TasksManager {
             }
         }
 
-        System.out.println("Нет такого Эпика!");
+        System.out.println(ANSI_RED + "getAllEpicSubTasks: --> Нет такого Эпика! <--\n" + ANSI_RESET);
 
         return null;
     }

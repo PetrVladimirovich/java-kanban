@@ -1,7 +1,9 @@
+package kanBan.models.business;
+
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Epic extends Task{
+public class Epic extends Task {
     private final HashMap<Integer, SubTask> subTasks;
 
     public Epic(String title, String description) {
@@ -37,12 +39,10 @@ public class Epic extends Task{
     @Override
     public String toString() {
 
-        return "Epic{" +
-                "subTasks=" + subTasks +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", taskId=" + taskId +
-                ", isStatus=" + status +
-                '}';
+        return "   Epic " + title
+                + "   ID: " + taskId
+                + "   Status: " + status
+                + "   У Эпика "
+                + subTasks.size() + " Подзадачи!\n";
     }
 }

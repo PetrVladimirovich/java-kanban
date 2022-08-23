@@ -1,13 +1,15 @@
+package kanBan.models.business;
+
 import java.util.Objects;
 
-public class SubTask extends Task{
+public class SubTask extends Task {
     private final int idEpic;
 
-    public SubTask(String title, String description, int idEpic) {
+    public SubTask(String title, String description, Epic epic) {
 
         super(title, description);
 
-        this.idEpic = idEpic;
+        this.idEpic = epic.getTaskId();
     }
 
     public int getIdEpic() {
@@ -16,13 +18,11 @@ public class SubTask extends Task{
 
     @Override
     public String toString() {
-        return "SubTask{" +
-                "idEpic=" + idEpic +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", taskId=" + taskId +
-                ", isStatus=" + status +
-                '}';
+        return "    Подзадача: " + title
+                + "    ID: " + taskId
+                + "    Status: " + status
+                + "    Принадлежит Эпику c ID: " + idEpic
+                + "\n";
     }
 
     @Override
