@@ -1,14 +1,6 @@
-/*
-    Добрый день! Вроде поправил)))
-
-    Вопрос:  а такие большие классы как TasksManager можно делать? 
-              и есть ли допустимые нормы по строкам для классов?
-
-    Конструктор поменял в SubTask
-*/
 package kanBan;
 
-import kanBan.services.manager.TasksManager;
+import kanBan.services.manager.*;
 import kanBan.models.business.*;
 import kanBan.models.enums.StatusTask;
 
@@ -16,7 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TasksManager tasksManager = new TasksManager();
+        TaskManager tasksManager = Managers.getDefault();
 
         Epic epicOne = tasksManager.creatingEpic(new Epic("firstTest", "descripFirstTest"));
         Epic epicTwo = tasksManager.creatingEpic(new Epic("SecondTest", "descripSecondTest"));
@@ -24,6 +16,11 @@ public class Main {
         tasksManager.creatingSubTask(new SubTask("tree", "treeDesc", epicOne));
         tasksManager.creatingSubTask(new SubTask("four", "fourDesc", epicOne));
         tasksManager.creatingSubTask(new SubTask("five", "fiveDesc", epicTwo));
+
+        tasksManager.creatingTask(new Task("six", "sixDesc"));
+        tasksManager.creatingTask(new Task("seven", "sevenDesc"));
+        tasksManager.creatingTask(new Task("eight", "eightDesc"));
+        tasksManager.creatingTask(new Task("nine", "nineDesc"));
 
         tasksManager.printSubTasks();
         tasksManager.printEpics();
@@ -38,17 +35,36 @@ public class Main {
 
         tasksManager.getSubTasks().get(4).setStatus(StatusTask.DONE);
         tasksManager.updateSubTask(tasksManager.getSubTasks().get(4));
+    /*
+    tasksManager.printEpics();
 
-        tasksManager.printEpics();
+    tasksManager.deletingByIdentifier(2);
 
-        tasksManager.deletingByIdentifier(2);
+    tasksManager.printSubTasks();
 
-        tasksManager.printSubTasks();
+    tasksManager.deletingByIdentifier(5);
 
-        tasksManager.deletingByIdentifier(5);
+    tasksManager.printSubTasks();
+    tasksManager.printEpics();
+    */
+        tasksManager.getBySubTaskId(5);
+        tasksManager.getBySubTaskId(5);
+        tasksManager.getBySubTaskId(5);
+        tasksManager.getBySubTaskId(5);
+        tasksManager.getBySubTaskId(4);
+        tasksManager.getByTaskId(7);
+        tasksManager.getByTaskId(6);
+        tasksManager.getBySubTaskId(3);
+        tasksManager.getBySubTaskId(3);
+        tasksManager.getByEpicId(2);
+        tasksManager.getByEpicId(1);
+        tasksManager.getBySubTaskId(3);
 
-        tasksManager.printSubTasks();
-        tasksManager.printEpics();
-
+        System.out.println("================= История запросов!!! ===============\n");
+        int count = 1;
+        for (Task task : tasksManager.getHistory()) {
+            System.out.printf("%d : %s\n\n", count, task);
+            ++count;
+        }
     }
 }

@@ -1,24 +1,35 @@
 package kanBan.services.manager;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 import kanBan.models.business.*;
 import kanBan.models.enums.StatusTask;
 
-public class TasksManager {
+public class InMemoryTaskManager implements TaskManager {
+
     private final String ANSI_RESET = "\u001B[0m";
     private final String ANSI_RED = "\u001B[31m";
 
     private int identifier;
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, SubTask> subTasks;
-    private final HashMap<Integer, Epic> epics;
+    private final Map<Integer, Task> tasks;
+    private final Map<Integer, SubTask> subTasks;
+    private final Map<Integer, Epic> epics;
+    private final HistoryManager history = Managers.getDefaultHistory();
 
-    public TasksManager() {
+
+    public InMemoryTaskManager() {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epics = new HashMap<>();
     }
 
+    @Override
+    public List<Task> getHistory() {
+        return history.getHistory();
+    }
+
+    @Override
     public void printTasks() {
 
         for (Task task : tasks.values()) {
@@ -29,6 +40,7 @@ public class TasksManager {
 
     }
 
+    @Override
     public void printSubTasks() {
 
         for (SubTask subTask : subTasks.values()) {
@@ -39,6 +51,7 @@ public class TasksManager {
 
     }
 
+    @Override
     public void printEpics() {
 
         for (Epic epic : epics.values()) {
@@ -56,18 +69,22 @@ public class TasksManager {
         }
     }
 
-    public HashMap<Integer, Task> getTasks() {
+    @Override
+    public Map<Integer, Task> getTasks() {
         return tasks;
     }
 
-    public HashMap<Integer, SubTask> getSubTasks() {
+    @Override
+    public Map<Integer, SubTask> getSubTasks() {
         return subTasks;
     }
 
-    public HashMap<Integer, Epic> getEpics() {
+    @Override
+    public Map<Integer, Epic> getEpics() {
         return epics;
     }
 
+    @Override
     public void deletingTasks() {
 
         if (tasks == null) {
@@ -79,6 +96,7 @@ public class TasksManager {
         tasks.clear();
     }
 
+    @Override
     public void deletingSubTasks() {
 
         if (subTasks == null) {
@@ -90,6 +108,7 @@ public class TasksManager {
         subTasks.clear();
     }
 
+    @Override
     public void deletingEpics() {
 
         if (epics == null) {
@@ -101,6 +120,7 @@ public class TasksManager {
         epics.clear();
     }
 
+    @Override
     public Task getByTaskId(int id) {
 
         Task task = null;
@@ -108,6 +128,7 @@ public class TasksManager {
         if (tasks.containsKey(id)) {
 
             task = tasks.get(id);
+            history.add(task);
 
         } else {
 
@@ -118,6 +139,7 @@ public class TasksManager {
         return task;
     }
 
+    @Override
     public SubTask getBySubTaskId(int id) {
 
         SubTask task = null;
@@ -125,6 +147,7 @@ public class TasksManager {
         if (subTasks.containsKey(id)) {
 
             task = subTasks.get(id);
+            history.add(task);
 
         } else {
 
@@ -135,6 +158,7 @@ public class TasksManager {
         return task;
     }
 
+    @Override
     public Epic getByEpicId(int id) {
 
         Epic task = null;
@@ -142,6 +166,7 @@ public class TasksManager {
         if (epics.containsKey(id)) {
 
             task = epics.get(id);
+            history.add(task);
 
         } else {
 
@@ -152,6 +177,7 @@ public class TasksManager {
         return task;
     }
 
+    @Override
     public Task creatingTask(Task task) {
 
         if (task == null) {
@@ -168,6 +194,7 @@ public class TasksManager {
         return task;
     }
 
+    @Override
     public Epic creatingEpic(Epic epic) {
 
         if (epic == null) {
@@ -184,6 +211,7 @@ public class TasksManager {
         return epic;
     }
 
+    @Override
     public SubTask creatingSubTask(SubTask subTask) {
 
         if (subTask == null) {
@@ -204,7 +232,8 @@ public class TasksManager {
         return subTask;
     }
 
-    private void checkingStatusEpic(int idEpic) {
+    @Override
+    public void checkingStatusEpic(int idEpic) {
 
         if (!epics.containsKey(idEpic)) {
             System.out.println(ANSI_RED + "checkingStatusEpic: --> Нет эпика с таким ID! <--\n" + ANSI_RESET);
@@ -247,10 +276,12 @@ public class TasksManager {
         }
     }
 
+    @Override
     public void updateTask(Task task) {
         tasks.put(task.getTaskId(), task);
     }
 
+    @Override
     public void updateSubTask(SubTask subTask) {
 
         subTasks.put(subTask.getTaskId(), subTask);
@@ -264,10 +295,12 @@ public class TasksManager {
 
     }
 
+    @Override
     public void updateEpic(Epic epic) {
         epics.put(epic.getTaskId(), epic);
     }
 
+    @Override
     public void deletingByIdentifier(int id) {
 
         if (tasks.containsKey(id)) {
@@ -295,7 +328,8 @@ public class TasksManager {
         }
     }
 
-    public HashMap<Integer, SubTask> getAllEpicSubTasks(Epic epic) {
+    @Override
+    public Map<Integer, SubTask> getAllEpicSubTasks(Epic epic) {
 
         for (Epic epicTmp : epics.values()) {
 
