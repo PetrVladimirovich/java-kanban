@@ -1,24 +1,30 @@
 package kanBan.models.business;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private final HashMap<Integer, SubTask> subTasks;
+    private final List<Integer> subTasksIds;
 
     public Epic(String title, String description) {
 
         super(title, description);
 
-        subTasks = new HashMap<>();
+        subTasksIds = new ArrayList<>();
     }
 
-    public HashMap<Integer, SubTask> getSubTasks() {
-        return subTasks;
+    public List<Integer> getSubTasksIds() {
+        return subTasksIds;
     }
 
     public void setSubTasks(SubTask subTask) {
-        subTasks.put(subTask.getTaskId(), subTask);
+
+        if (!subTasksIds.contains(subTask.getTaskId())) {
+
+            subTasksIds.add(subTask.getTaskId());
+
+        }
     }
 
 
@@ -28,12 +34,12 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return Objects.equals(subTasks, epic.subTasks);
+        return Objects.equals(subTasksIds, epic.subTasksIds);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subTasks);
+        return Objects.hash(super.hashCode(), subTasksIds);
     }
 
     @Override
@@ -43,6 +49,6 @@ public class Epic extends Task {
                 + "   ID: " + taskId
                 + "   Status: " + status
                 + "   У Эпика "
-                + subTasks.size() + " Подзадачи!\n";
+                + subTasksIds.size() + " Подзадачи!\n";
     }
 }
