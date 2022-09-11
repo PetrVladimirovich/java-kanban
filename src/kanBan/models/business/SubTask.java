@@ -6,10 +6,8 @@ public class SubTask extends Task {
     private final int idEpic;
 
     public SubTask(String title, String description, Epic epic) {
-
         super(title, description);
-
-        this.idEpic = epic.getTaskId();
+        this.idEpic = epic.getId();
     }
 
     public int getIdEpic() {
@@ -19,7 +17,7 @@ public class SubTask extends Task {
     @Override
     public String toString() {
         return "    Подзадача: " + title
-                + "    ID: " + taskId
+                + "    ID: " + id
                 + "    Status: " + status
                 + "    Принадлежит Эпику c ID: " + idEpic
                 + "\n";

@@ -6,9 +6,8 @@ import kanBan.models.enums.StatusTask;
 public class Task {
     protected String title;
     protected String description;
-    protected int taskId;
+    protected int id;
     protected StatusTask status;
-
 
     public Task(String title, String description) {
         this.title = title;
@@ -32,12 +31,12 @@ public class Task {
         this.description = description;
     }
 
-    public int getTaskId() {
-        return taskId;
+    public int getId() {
+        return id;
     }
 
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public StatusTask getIsStatus() {
@@ -53,7 +52,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskId == task.taskId
+        return id == task.id
                 && Objects.equals(title, task.title)
                 && Objects.equals(description, task.description)
                 && Objects.equals(status, task.status);
@@ -61,7 +60,7 @@ public class Task {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(title, description, taskId, status);
+        int result = Objects.hash(title, description, id, status);
 
         return result;
     }
@@ -69,7 +68,7 @@ public class Task {
     @Override
     public String toString() {
         return "    Задача " + title
-                + "   ID: " + taskId
+                + "   ID: " + id
                 + "    status: " + status
                 + "    Описание: [" + description + " ]\n";
     }

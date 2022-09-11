@@ -18,15 +18,11 @@ public class Epic extends Task {
         return subTasksIds;
     }
 
-    public void setSubTasks(SubTask subTask) {
-
-        if (!subTasksIds.contains(subTask.getTaskId())) {
-
-            subTasksIds.add(subTask.getTaskId());
-
+    public void addSubTask(SubTask subTask) {
+        if (!subTasksIds.contains(subTask.getId())) {
+            subTasksIds.add(subTask.getId());
         }
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -46,7 +42,7 @@ public class Epic extends Task {
     public String toString() {
 
         return "   Epic " + title
-                + "   ID: " + taskId
+                + "   ID: " + id
                 + "   Status: " + status
                 + "   У Эпика "
                 + subTasksIds.size() + " Подзадачи!\n";
