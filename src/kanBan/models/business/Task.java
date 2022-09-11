@@ -15,6 +15,12 @@ public class Task {
         this.status = StatusTask.NEW;
     }
 
+    public Task(Task other) {
+        this(other.getTitle(), other.getDescription());
+        this.id = other.getId();
+        this.status = other.getIsStatus();
+    }
+
     public String getTitle() {
         return title;
     }

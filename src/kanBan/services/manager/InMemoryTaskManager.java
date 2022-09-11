@@ -240,9 +240,8 @@ public class InMemoryTaskManager implements TaskManager {
 
         Epic currentEpic = epics.get(subTask.getIdEpic());
 
-        currentEpic.addSubTask(subTask);
-
         checkingStatusEpic(subTask.getIdEpic());
+        currentEpic.addSubTask(subTask);
     }
 
     @Override

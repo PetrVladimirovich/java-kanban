@@ -51,6 +51,8 @@ public class Main {
         tasksManager.getBySubTaskId(5);
         tasksManager.getBySubTaskId(5);
         tasksManager.getBySubTaskId(5);
+        tasksManager.getSubTasks().get(5).setTitle("kykky");
+        tasksManager.getBySubTaskId(5);
         tasksManager.getBySubTaskId(4);
         tasksManager.getByTaskId(7);
         tasksManager.getByTaskId(6);
