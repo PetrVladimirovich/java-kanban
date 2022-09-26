@@ -252,22 +252,22 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deletingByIdentifier(int id) {
         if (tasks.containsKey(id)) {
-
             tasks.remove(id);
+            history.remove(id);
 
         } else if (subTasks.containsKey(id)) {
-
             subTasks.remove(id);
+            history.remove(id);
 
         } else if (epics.containsKey(id)) {
-
             Epic currentEpic = epics.get(id);
 
             for (Integer idSubTask : currentEpic.getSubTasksIds()) {
                 subTasks.remove(idSubTask);
+                history.remove(idSubTask);
             }
-
             epics.remove(id);
+            history.remove(id);
 
         } else {
             System.out.println(ANSI_RED + "deletingByIdentifier: --> Такого ID: " + id + " нету! <--\n" + ANSI_RESET);
