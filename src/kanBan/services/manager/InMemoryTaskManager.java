@@ -230,23 +230,40 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
+        if (tasks.containsKey(task.getId())) {
+            tasks.put(task.getId(), task);
+            history.add(task);
+        } else {
+            System.out.println(ANSI_RED + "updateTask: --> Не могу обновить! Нету такой ТАСКИ! <--\n" + ANSI_RESET);
+        }
     }
 
     @Override
     public void updateSubTask(SubTask subTask) {
+        if (subTasks.containsKey(subTask.getId())) {
+            subTasks.put(subTask.getId(), subTask);
 
-        subTasks.put(subTask.getId(), subTask);
+            Epic currentEpic = epics.get(subTask.getIdEpic());
 
-        Epic currentEpic = epics.get(subTask.getIdEpic());
+            checkingStatusEpic(subTask.getIdEpic());
+            currentEpic.addSubTask(subTask);
+            history.add(subTask);
+        } else {
+            System.out.println(ANSI_RED + "updateSubTask: --> Не могу обновить! Нету такой САБТАСКИ! <--\n" + ANSI_RESET);
+        }
 
-        checkingStatusEpic(subTask.getIdEpic());
-        currentEpic.addSubTask(subTask);
     }
 
     @Override
     public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+        if (epics.containsKey(epic.getId())) {
+            epics.put(epic.getId(), epic);
+            checkingStatusEpic(epic.getId());
+            history.add(epic);
+        }else {
+            System.out.println(ANSI_RED + "updateEpic: --> Не могу обновить! Нет такого ЭПИКА! <--\n" + ANSI_RESET);
+        }
+
     }
 
     @Override

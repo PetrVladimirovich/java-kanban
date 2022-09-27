@@ -1,3 +1,8 @@
+/*
+*       Добрый день! Ага пропало ограничение, там в ТЗ написано:
+*               "В этом спринте вам предстоит поработать с историей просмотров задач,
+*               а именно избавиться от повторных просмотров в ней и ОГРАНИЧЕНИЯ НА РАЗМЕР ИСТОРИИ."
+* */
 package kanBan;
 
 import kanBan.services.manager.*;
@@ -17,15 +22,22 @@ public class Main {
         tasksManager.creatingSubTask(new SubTask("four", "fourDesc", epicOne));
         tasksManager.creatingSubTask(new SubTask("five", "fiveDesc", epicOne));
 
+
         tasksManager.getBySubTaskId(5);
         tasksManager.getByEpicId(2);
         tasksManager.getBySubTaskId(3);
         tasksManager.getBySubTaskId(5);
-        tasksManager.getBySubTaskId(5);
         tasksManager.getByEpicId(1);
-            System.out.println(tasksManager.getHistory());
+        tasksManager.getBySubTaskId(5);
+        System.out.println(tasksManager.getHistory());
+        tasksManager.updateTask(new Task("eleven", "ElevenDesc"));
+        tasksManager.updateSubTask(new SubTask("ten", "tenDesc", epicOne));
+        epicOne.setDescription("OneFirst");
+        tasksManager.updateEpic(epicOne);
+        System.out.println(tasksManager.getHistory());
         tasksManager.getBySubTaskId(4);
         tasksManager.getBySubTaskId(5);
+        tasksManager.updateEpic(new Epic("cool", "coolDesc"));
         tasksManager.getBySubTaskId(5);
         System.out.println(tasksManager.getHistory());
         tasksManager.getBySubTaskId(3);
