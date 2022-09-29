@@ -1,6 +1,6 @@
 package kanBan.models.business;
 
-public class Node<E> {
+public class Node<E extends Task> {
     public E data;
     public Node<E> next;
     public Node<E> prev;

@@ -5,12 +5,12 @@ import java.util.*;
 import kanBan.models.business.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final Map<Integer, Node> buffer;
-    private final CustomLinkedList linkedHistory;
+    private final Map<Integer, Node<Task>> buffer;
+    private final CustomLinkedList<Task> linkedHistory;
 
     public InMemoryHistoryManager() {
         buffer = new HashMap<>();
-        linkedHistory = new CustomLinkedList();
+        linkedHistory = new CustomLinkedList<>();
     }
 
     @Override
@@ -23,12 +23,14 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        Task taskTemp = new Task(task);
 
-        if (buffer.containsKey(taskTemp.getId())) {
-            linkedHistory.removeNode(buffer.get(taskTemp.getId()));
+        //Task taskTemp = new Task(task);
+
+        if (buffer.containsKey(task.getId())) {
+            linkedHistory.removeNode(buffer.get(task.getId()));
         }
-        linkedHistory.linkLast(taskTemp);
+        linkedHistory.linkLast(task);
+        buffer.put(task.getId(), linkedHistory.tail);
     }
 
     @Override
@@ -36,12 +38,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         return linkedHistory.getTasks();
     }
 
-    class CustomLinkedList {
-        private Node<Task> head;
-        private Node<Task> tail;
+    private class CustomLinkedList<T extends Task> {
+        private Node<T> head;
+        private Node<T> tail;
         private int size = 0;
 
-        public void removeNode(Node node) {
+        public void removeNode(Node<T> node) {
             if (node.prev != null && node.next != null) {
                 node.prev.next = node.next;
                 node.next.prev = node.prev;
@@ -64,14 +66,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             size--;
         }
 
-        public void linkLast(Task element) {
-            final Node<Task> newNode;
+        public void linkLast(T element) {
+            final Node<T> newNode;
             if (size == 0) {
                  newNode = new Node<>(null, element, null);
                 head = newNode;
                 tail = newNode;
             }else {
-                final Node<Task> oldTail = tail;
+                final Node<T> oldTail = tail;
                 newNode = new Node<>(oldTail, element, null);
                 tail = newNode;
                 if (oldTail == null) {
@@ -81,12 +83,11 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
 
             size++;
-            buffer.put(element.getId(), newNode);
         }
 
-        public List<Task> getTasks() {
-            List<Task> arrHistory = new ArrayList<>();
-            Node<Task> tempNode = head;
+        public List<T> getTasks() {
+            List<T> arrHistory = new ArrayList<>();
+            Node<T> tempNode = head;
 
             for (int i = 0; i < size(); i++) {
                 if (tempNode.data != null) {
