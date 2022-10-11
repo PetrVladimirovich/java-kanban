@@ -1,5 +1,7 @@
 package kanBan.models.business;
 
+import kanBan.models.enums.TypeTask;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -10,7 +12,7 @@ public class Epic extends Task {
     public Epic(String title, String description) {
 
         super(title, description);
-
+        this.type = TypeTask.EPIC;
         subTasksIds = new ArrayList<>();
     }
 

@@ -1,5 +1,7 @@
 package kanBan.models.business;
 
+import kanBan.models.enums.TypeTask;
+
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -8,6 +10,7 @@ public class SubTask extends Task {
     public SubTask(String title, String description, Epic epic) {
         super(title, description);
         this.idEpic = epic.getId();
+        this.type = TypeTask.SUBTASK;
     }
 
     public int getIdEpic() {

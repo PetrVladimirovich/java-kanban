@@ -2,17 +2,20 @@ package kanBan.models.business;
 
 import java.util.Objects;
 import kanBan.models.enums.StatusTask;
+import kanBan.models.enums.TypeTask;
 
 public class Task {
     protected String title;
     protected String description;
     protected int id;
     protected StatusTask status;
+    protected TypeTask type;
 
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
         this.status = StatusTask.NEW;
+        this.type = TypeTask.TASK;
     }
 
     public Task(Task other) {
