@@ -21,6 +21,10 @@ public class InMemoryTaskManager implements TaskManager {
         epics = new HashMap<>();
     }
 
+    public HistoryManager getHistoryManager() {
+        return this.history;
+    }
+
     @Override
     public List<Task> getHistory() {
         return history.getHistory();

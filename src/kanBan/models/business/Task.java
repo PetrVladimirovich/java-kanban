@@ -11,6 +11,18 @@ public class Task {
     protected StatusTask status;
     protected TypeTask type;
 
+    public StatusTask getStatus() {
+        return status;
+    }
+
+    public TypeTask getType() {
+        return type;
+    }
+
+    public void setType(TypeTask type) {
+        this.type = type;
+    }
+
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
@@ -22,6 +34,14 @@ public class Task {
         this(other.getTitle(), other.getDescription());
         this.id = other.getId();
         this.status = other.getIsStatus();
+    }
+
+    public Task(int id, TypeTask type, String title, StatusTask status, String description) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.type = type;
     }
 
     public String getTitle() {

@@ -1,0 +1,9 @@
+id,type,name,status,description,epic
+3,TASK,taskwe,NEW,qwe!231321312qwe,
+1,EPIC,firstTest,IN_PROGRESS,descripFirstTest,
+2,EPIC,SecondTest,NEW,descripSecondTest,
+4,SUBTASK,four,NEW,fourDesc,1,
+5,SUBTASK,five,IN_PROGRESS,fiveDesc,1,
+6,SUBTASK,six,DONE,sixDesc,1
+
+6,2,3,4,5
