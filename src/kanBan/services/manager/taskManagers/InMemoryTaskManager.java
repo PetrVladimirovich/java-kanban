@@ -1,10 +1,12 @@
-package kanBan.services.manager;
+package kanBan.services.manager.taskManagers;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import kanBan.models.business.*;
 import kanBan.models.enums.StatusTask;
+import kanBan.services.manager.historyManager.HistoryManager;
+import kanBan.services.manager.Managers;
 
 public class InMemoryTaskManager implements TaskManager {
     private final String ANSI_RESET = "\u001B[0m";
@@ -74,27 +76,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deletingTasks() {
+    public void deleteTasks() {
         if (tasks == null) {
-            System.out.println(ANSI_RED + "deletingTasks: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "deleteTasks: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
             return;
         }
         tasks.clear();
     }
 
     @Override
-    public void deletingSubTasks() {
+    public void deleteSubTasks() {
         if (subTasks == null) {
-            System.out.println(ANSI_RED + "deletingSubTasks: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "deleteSubTasks: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
             return;
         }
         subTasks.clear();
     }
 
     @Override
-    public void deletingEpics() {
+    public void deleteEpics() {
         if (epics == null) {
-            System.out.println(ANSI_RED + "deletingEpics: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "deleteEpics: --> Невозможно передать такой объект! <--\n" + ANSI_RESET);
             return;
         }
         epics.clear();
@@ -141,10 +143,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task creatingTask(Task task) {
+    public Task createTask(Task task) {
         if (task == null) {
 
-            System.out.println(ANSI_RED + "creatingTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "createTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
             return null;
         }
         identifier++;
@@ -157,9 +159,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic creatingEpic(Epic epic) {
+    public Epic createEpic(Epic epic) {
         if (epic == null) {
-            System.out.println(ANSI_RED + "creatingEpic: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "createEpic: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
             return null;
         }
 
@@ -173,9 +175,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SubTask creatingSubTask(SubTask subTask) {
+    public SubTask createSubTask(SubTask subTask) {
         if (subTask == null) {
-            System.out.println(ANSI_RED + "creatingSubTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "createSubTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
             return null;
         }
 
@@ -193,9 +195,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void checkingStatusEpic(int idEpic) {
+    public void checkStatusEpic(int idEpic) {
         if (!epics.containsKey(idEpic)) {
-            System.out.println(ANSI_RED + "checkingStatusEpic: --> Нет эпика с таким ID! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "checkStatusEpic: --> Нет эпика с таким ID! <--\n" + ANSI_RESET);
             return;
         }
 
@@ -249,7 +251,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             Epic currentEpic = epics.get(subTask.getIdEpic());
 
-            checkingStatusEpic(subTask.getIdEpic());
+            checkStatusEpic(subTask.getIdEpic());
             currentEpic.addSubTask(subTask);
             history.add(subTask);
         } else {
@@ -262,7 +264,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
-            checkingStatusEpic(epic.getId());
+            checkStatusEpic(epic.getId());
             history.add(epic);
         }else {
             System.out.println(ANSI_RED + "updateEpic: --> Не могу обновить! Нет такого ЭПИКА! <--\n" + ANSI_RESET);
@@ -271,7 +273,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deletingByIdentifier(int id) {
+    public void deleteByIdentifier(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
             history.remove(id);
@@ -293,7 +295,7 @@ public class InMemoryTaskManager implements TaskManager {
             history.remove(id);
 
         } else {
-            System.out.println(ANSI_RED + "deletingByIdentifier: --> Такого ID: " + id + " нету! <--\n" + ANSI_RESET);
+            System.out.println(ANSI_RED + "deleteByIdentifier: --> Такого ID: " + id + " нету! <--\n" + ANSI_RESET);
         }
     }
 

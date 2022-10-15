@@ -1,4 +1,4 @@
-package kanBan.services.manager;
+package kanBan.services.manager.taskManagers;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,11 +15,11 @@ import java.util.LinkedList;
 import kanBan.exceptions.ManagerSaveException;
 import kanBan.models.business.*;
 import kanBan.models.enums.*;
+import kanBan.services.manager.historyManager.HistoryManager;
 
-public class FileBackedTasksManager extends InMemoryTaskManager{
+public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path file;
     private static final String HEADINGS_CSV = "id,type,name,status,description,epic\n";
-    private Set<Task> taskSequence;
 
     public FileBackedTasksManager(final Path file) {
         super();
@@ -29,13 +29,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     public static void main(String[] args) {
         Path pat = Paths.get("test.csv");
         FileBackedTasksManager man = new FileBackedTasksManager(pat);
-        Epic epicOne = man.creatingEpic(new Epic("firstTest", "descripFirstTest"));
-        Epic epicTwo = man.creatingEpic(new Epic("SecondTest", "descripSecondTest"));
-        Task taskONE = man.creatingTask(new Task("taskwe", "qwe!231321312qwe"));
+        Epic epicOne = man.createEpic(new Epic("firstTest", "descripFirstTest"));
+        Epic epicTwo = man.createEpic(new Epic("SecondTest", "descripSecondTest"));
+        Task taskONE = man.createTask(new Task("taskwe", "qwe!231321312qwe"));
 
-        man.creatingSubTask(new SubTask("four", "fourDesc", epicOne));
-        man.creatingSubTask(new SubTask("five", "fiveDesc", epicOne));
-        man.creatingSubTask(new SubTask("six", "sixDesc", epicOne));
+        man.createSubTask(new SubTask("four", "fourDesc", epicOne));
+        man.createSubTask(new SubTask("five", "fiveDesc", epicOne));
+        man.createSubTask(new SubTask("six", "sixDesc", epicOne));
         man.getSubTasks().get(6).setStatus(StatusTask.DONE);
         man.updateSubTask(man.getSubTasks().get(6));
         man.getBySubTaskId(4);
@@ -172,7 +172,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     }
 
     public void save() {
-        taskSequence = new LinkedHashSet<>();
+        Set<Task> taskSequence = new LinkedHashSet<>();
         taskSequence.addAll(getTasks().values());
         taskSequence.addAll(getEpics().values());
         taskSequence.addAll(getSubTasks().values());
@@ -217,22 +217,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     }
 
     @Override
-    public Task creatingTask(Task task) {
-        super.creatingTask(task);
+    public Task createTask(Task task) {
+        super.createTask(task);
         save();
         return task;
     }
 
     @Override
-    public SubTask creatingSubTask(SubTask subTask) {
-        super.creatingSubTask(subTask);
+    public SubTask createSubTask(SubTask subTask) {
+        super.createSubTask(subTask);
         save();
         return subTask;
     }
 
     @Override
-    public Epic creatingEpic(Epic epic) {
-        super.creatingEpic(epic);
+    public Epic createEpic(Epic epic) {
+        super.createEpic(epic);
         save();
         return epic;
     }
@@ -256,26 +256,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     }
 
     @Override
-    public void deletingByIdentifier(int id) {
-        super.deletingByIdentifier(id);
+    public void deleteByIdentifier(int id) {
+        super.deleteByIdentifier(id);
         save();
     }
 
     @Override
-    public void deletingTasks() {
-        super.deletingTasks();
+    public void deleteTasks() {
+        super.deleteTasks();
         save();
     }
 
     @Override
-    public void deletingSubTasks() {
-        super.deletingSubTasks();
+    public void deleteSubTasks() {
+        super.deleteSubTasks();
         save();
     }
 
     @Override
-    public void deletingEpics() {
-        super.deletingEpics();
+    public void deleteEpics() {
+        super.deleteEpics();
         save();
     }
 

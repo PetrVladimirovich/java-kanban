@@ -1,9 +1,8 @@
-
 package kanBan;
 
 import kanBan.services.manager.*;
 import kanBan.models.business.*;
-import kanBan.models.enums.StatusTask;
+import kanBan.services.manager.taskManagers.TaskManager;
 
 public class Main {
 
@@ -11,12 +10,12 @@ public class Main {
 
         TaskManager tasksManager = Managers.getDefault();
 
-        Epic epicOne = tasksManager.creatingEpic(new Epic("firstTest", "descripFirstTest"));
-        Epic epicTwo = tasksManager.creatingEpic(new Epic("SecondTest", "descripSecondTest"));
+        Epic epicOne = tasksManager.createEpic(new Epic("firstTest", "descripFirstTest"));
+        Epic epicTwo = tasksManager.createEpic(new Epic("SecondTest", "descripSecondTest"));
 
-        tasksManager.creatingSubTask(new SubTask("tree", "treeDesc", epicOne));
-        tasksManager.creatingSubTask(new SubTask("four", "fourDesc", epicOne));
-        tasksManager.creatingSubTask(new SubTask("five", "fiveDesc", epicOne));
+        tasksManager.createSubTask(new SubTask("tree", "treeDesc", epicOne));
+        tasksManager.createSubTask(new SubTask("four", "fourDesc", epicOne));
+        tasksManager.createSubTask(new SubTask("five", "fiveDesc", epicOne));
 
 
         tasksManager.getBySubTaskId(5);
@@ -38,13 +37,13 @@ public class Main {
         System.out.println(tasksManager.getHistory());
         tasksManager.getBySubTaskId(3);
         System.out.println(tasksManager.getHistory());
-        tasksManager.deletingByIdentifier(3);
+        tasksManager.deleteByIdentifier(3);
         System.out.println(tasksManager.getHistory());
         tasksManager.getSubTasks().get(5).setTitle("kykky");
         tasksManager.getBySubTaskId(5);
         System.out.println(tasksManager.getHistory());
         tasksManager.getBySubTaskId(4);
-        tasksManager.deletingByIdentifier(1);
+        tasksManager.deleteByIdentifier(1);
         System.out.println(tasksManager.getHistory());
     }
 }

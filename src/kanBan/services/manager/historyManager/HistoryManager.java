@@ -1,4 +1,4 @@
-package kanBan.services.manager;
+package kanBan.services.manager.historyManager;
 
 import java.util.List;
 import kanBan.models.business.*;

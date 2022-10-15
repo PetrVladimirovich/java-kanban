@@ -1,8 +1,9 @@
-package kanBan.services.manager;
+package kanBan.services.manager.historyManager;
 
 import java.util.*;
 
 import kanBan.models.business.*;
+import kanBan.services.manager.historyManager.HistoryManager;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final Map<Integer, Node<Task>> buffer;
