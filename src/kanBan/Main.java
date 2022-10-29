@@ -2,48 +2,33 @@ package kanBan;
 
 import kanBan.services.manager.*;
 import kanBan.models.business.*;
+import kanBan.models.enums.StatusTask;
 import kanBan.services.manager.taskManagers.TaskManager;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Main {
 
     public static void main(String[] args) {
 
         TaskManager tasksManager = Managers.getDefault();
+        LocalDateTime ldt = LocalDateTime.of(2022, 10, 16, 10, 30);
+        Duration dur = Duration.ofMinutes(60);
 
         Epic epicOne = tasksManager.createEpic(new Epic("firstTest", "descripFirstTest"));
         Epic epicTwo = tasksManager.createEpic(new Epic("SecondTest", "descripSecondTest"));
 
-        tasksManager.createSubTask(new SubTask("tree", "treeDesc", epicOne));
-        tasksManager.createSubTask(new SubTask("four", "fourDesc", epicOne));
-        tasksManager.createSubTask(new SubTask("five", "fiveDesc", epicOne));
+        SubTask sub3 = tasksManager.createSubTask(new SubTask("tree", "treeDesc", epicOne, "14:00 14.10.22", 360));
+
+        SubTask sub4 = tasksManager.createSubTask(new SubTask("four", "fourDesc", epicOne, "10:30 14.10.22", 30));
+        SubTask sub5 = tasksManager.createSubTask(new SubTask("five", "fiveDesc", epicOne));
+        SubTask sub6 = tasksManager.createSubTask(new SubTask("six", "sixDesc", epicOne, "18:00 15.10.22", 120));
+        tasksManager.printEpics();
+        sub5.setStartTime(ldt);
+        sub5.setDuration(dur);
 
 
-        tasksManager.getBySubTaskId(5);
-        tasksManager.getByEpicId(2);
-        tasksManager.getBySubTaskId(3);
-        tasksManager.getBySubTaskId(5);
-        tasksManager.getByEpicId(1);
-        tasksManager.getBySubTaskId(5);
-        System.out.println(tasksManager.getHistory());
-        tasksManager.updateTask(new Task("eleven", "ElevenDesc"));
-        tasksManager.updateSubTask(new SubTask("ten", "tenDesc", epicOne));
-        epicOne.setDescription("OneFirst");
-        tasksManager.updateEpic(epicOne);
-        System.out.println(tasksManager.getHistory());
-        tasksManager.getBySubTaskId(4);
-        tasksManager.getBySubTaskId(5);
-        tasksManager.updateEpic(new Epic("cool", "coolDesc"));
-        tasksManager.getBySubTaskId(5);
-        System.out.println(tasksManager.getHistory());
-        tasksManager.getBySubTaskId(3);
-        System.out.println(tasksManager.getHistory());
-        tasksManager.deleteByIdentifier(3);
-        System.out.println(tasksManager.getHistory());
-        tasksManager.getSubTasks().get(5).setTitle("kykky");
-        tasksManager.getBySubTaskId(5);
-        System.out.println(tasksManager.getHistory());
-        tasksManager.getBySubTaskId(4);
-        tasksManager.deleteByIdentifier(1);
-        System.out.println(tasksManager.getHistory());
+        tasksManager.updateSubTask(sub5);
+        tasksManager.printEpics();
     }
 }

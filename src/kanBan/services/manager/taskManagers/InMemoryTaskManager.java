@@ -2,6 +2,9 @@ package kanBan.services.manager.taskManagers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.time.Duration;
 import java.util.List;
 import kanBan.models.business.*;
 import kanBan.models.enums.StatusTask;
@@ -21,6 +24,61 @@ public class InMemoryTaskManager implements TaskManager {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epics = new HashMap<>();
+    }
+
+    @Override
+    public void checkStartTimeEpic(int idEpic) {
+        Optional<LocalDateTime> minDate = subTasks.values().stream()
+                                                .filter(i -> idEpic == i.getIdEpic())
+                                                .filter(i -> i.getStartTime().isPresent())
+                                                .map(e -> e.getStartTime().get())
+                                                .min(LocalDateTime::compareTo);
+
+        if (minDate.isPresent() && epics.containsKey(idEpic)) {
+            Epic epic = epics.get(idEpic);
+            epic.setStartTime(minDate.get());
+            epics.put(epic.getId(), epic);
+        }
+    }
+
+    @Override
+    public void checkEndTimeEpic(int idEpic) {
+        LocalDateTime maxTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+        Duration duration = Duration.ofMinutes(0);
+
+        for (SubTask subTask : subTasks.values()) {
+            if (subTask.getStartTime().isPresent() && (subTask.getIdEpic() == idEpic)) {
+                if (maxTime.isBefore(subTask.getStartTime().get())) {
+                    maxTime = subTask.getStartTime().get();
+                    duration = subTask.getDuration().get();
+                }
+            }
+        }
+
+        if (epics.containsKey(idEpic)) {
+            Epic epic = epics.get(idEpic);
+            epic.setEndTime(maxTime.plus(duration));
+            epics.put(epic.getId(), epic);
+        }
+    }
+
+    @Override
+    public void checkDurationEpic(int idEpic) {
+        Duration duration = Duration.ofMinutes(0);
+
+        for (SubTask subTask : subTasks.values()) {
+            if (subTask.getDuration().isEmpty() && (subTask.getIdEpic() == idEpic)) {
+                continue;
+            }else {
+                duration = duration.plus(subTask.getDuration().get());
+            }
+        }
+
+        if (epics.containsKey(idEpic)) {
+            Epic epic = epics.get(idEpic);
+            epic.setDuration(duration);
+            epics.put(epic.getId(), epic);
+        }
     }
 
     public HistoryManager getHistoryManager() {
@@ -188,6 +246,9 @@ public class InMemoryTaskManager implements TaskManager {
         subTasks.put(identifier, subTask);
 
         Epic currentEpic = epics.get(subTask.getIdEpic());
+        checkDurationEpic(currentEpic.getId());
+        checkEndTimeEpic(currentEpic.getId());
+        checkStartTimeEpic(currentEpic.getId());
 
         currentEpic.addSubTask(subTask);
 
@@ -252,6 +313,9 @@ public class InMemoryTaskManager implements TaskManager {
             Epic currentEpic = epics.get(subTask.getIdEpic());
 
             checkStatusEpic(subTask.getIdEpic());
+            checkDurationEpic(currentEpic.getId());
+            checkEndTimeEpic(currentEpic.getId());
+            checkStartTimeEpic(currentEpic.getId());
             currentEpic.addSubTask(subTask);
             history.add(subTask);
         } else {
@@ -282,6 +346,9 @@ public class InMemoryTaskManager implements TaskManager {
             int epicId = subTasks.get(id).getIdEpic();
             epics.get(epicId).deleteSubTasksIds(id);
             subTasks.remove(id);
+            checkDurationEpic(epicId);
+            checkEndTimeEpic(epicId);
+            checkStartTimeEpic(epicId);
             history.remove(id);
 
         } else if (epics.containsKey(id)) {

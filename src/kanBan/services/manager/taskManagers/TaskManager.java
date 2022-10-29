@@ -3,9 +3,11 @@ package kanBan.services.manager.taskManagers;
 import java.util.Map;
 import java.util.List;
 import kanBan.models.business.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public interface TaskManager {
-
+    static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd.MM.yy");
     void printTasks();
 
     void printSubTasks();
@@ -49,5 +51,11 @@ public interface TaskManager {
     Map<Integer, SubTask> getAllEpicSubTasks(Epic epic);
 
     List<Task> getHistory();
+
+    void checkStartTimeEpic(int idEpic);
+
+    void checkEndTimeEpic(int idEpic);
+
+    void checkDurationEpic(int idEpic);
 
 }

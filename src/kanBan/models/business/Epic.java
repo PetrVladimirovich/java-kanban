@@ -1,14 +1,16 @@
 package kanBan.models.business;
 
-import kanBan.models.enums.StatusTask;
-import kanBan.models.enums.TypeTask;
-
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Optional;
+import kanBan.models.enums.*;
+import java.time.LocalDateTime;
+import java.time.Duration;
 
 public class Epic extends Task {
     private final List<Integer> subTasksIds;
+    private LocalDateTime endTime;
 
     public Epic(String title, String description) {
 
@@ -20,6 +22,19 @@ public class Epic extends Task {
     public Epic(int id, TypeTask type, String title, StatusTask status, String description) {
         super(id, type, title, status, description);
         subTasksIds = new ArrayList<>();
+    }
+
+    public void setEndTime(LocalDateTime endTimeEpic) {
+        this.endTime = endTimeEpic;
+    }
+
+    @Override
+    public Optional<LocalDateTime> getEndTime() {
+        if (endTime != null) {
+            return Optional.of(endTime);
+        }else {
+            return Optional.empty();
+        }
     }
 
     public List<Integer> getSubTasksIds() {
@@ -55,6 +70,9 @@ public class Epic extends Task {
         return "   Epic " + title
                 + "   ID: " + id
                 + "   Status: " + status
+                + "   Старт: " + printStartTime()
+                + "   Продолжительность: " + printDuration()
+                + "   Окончание: " + printEndTime()
                 + "   У Эпика "
                 + subTasksIds.size() + " Подзадачи!\n";
     }

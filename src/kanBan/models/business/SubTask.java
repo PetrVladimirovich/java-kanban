@@ -14,6 +14,12 @@ public class SubTask extends Task {
         this.type = TypeTask.SUBTASK;
     }
 
+    public SubTask(String title, String description, Epic epic, String startTime, int duration) {
+        super(title, description, startTime, duration);
+        this.idEpic = epic.getId();
+        this.type = TypeTask.SUBTASK;
+    }
+
     public SubTask(int id, TypeTask type, String title, StatusTask status, String description, int idEpic) {
         super(id, type, title, status, description);
         this.idEpic = idEpic;
@@ -28,6 +34,8 @@ public class SubTask extends Task {
         return "    Подзадача: " + title
                 + "    ID: " + id
                 + "    Status: " + status
+                + "    Начало задачи: " + printStartTime()
+                + "    Продолжительностью: " + printDuration()
                 + "    Принадлежит Эпику c ID: " + idEpic
                 + "\n";
     }

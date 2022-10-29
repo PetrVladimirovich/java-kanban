@@ -42,8 +42,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         man.getSubTasks().get(5).setStatus(StatusTask.IN_PROGRESS);
         man.updateSubTask(man.getSubTasks().get(5));
         man.getByEpicId(2);
-        man.getByTaskId(3);
-        man.getBySubTaskId(4);
+
         man.getBySubTaskId(4);
         man.getBySubTaskId(5);
         System.out.println("\n$$$$$$$$$Здесь закончилась запись )))$$$$$$\n");
