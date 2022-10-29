@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.BufferedWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,7 +21,7 @@ import kanBan.services.manager.historyManager.HistoryManager;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path file;
-    private static final String HEADINGS_CSV = "id,type,name,status,description,epic\n";
+    private static final String HEADINGS_CSV = "id,type,name,status,description,startTime,duration,epic\n";
 
     public FileBackedTasksManager(final Path file) {
         super();
@@ -33,8 +35,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Epic epicTwo = man.createEpic(new Epic("SecondTest", "descripSecondTest"));
         Task taskONE = man.createTask(new Task("taskwe", "qwe!231321312qwe"));
 
-        man.createSubTask(new SubTask("four", "fourDesc", epicOne));
-        man.createSubTask(new SubTask("five", "fiveDesc", epicOne));
+        man.createSubTask(new SubTask("four", "fourDesc", epicOne, "14:00 10.10.22", 120));
+        man.createSubTask(new SubTask("five", "fiveDesc", epicOne, "10:00 09.10.22", 360));
         man.createSubTask(new SubTask("six", "sixDesc", epicOne));
         man.getSubTasks().get(6).setStatus(StatusTask.DONE);
         man.updateSubTask(man.getSubTasks().get(6));
@@ -54,13 +56,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(qwe.getHistory());
     }
     private String toString(Task task) {
+        String startTime = (task.getStartTime().isPresent()) ? task.getStartTime().get().format(DATE_TIME_FORMATTER) : "Не задано";
+        String duration = (task.getDuration().isPresent()) ? String.valueOf(task.getDuration().get().toMinutes()) : "Не задано";
+
         if (task instanceof SubTask) {
             SubTask sub = (SubTask) task;
-            return String.format("%s,%s,%s,%s,%s,%s", sub.getId(), sub.getType(),
-                    sub.getTitle(), sub.getStatus(), sub.getDescription(), sub.getIdEpic());
+            return String.format("%s,%s,%s,%s,%s,%s,%s,%s", sub.getId(), sub.getType(),
+                    sub.getTitle(), sub.getStatus(), sub.getDescription(), startTime, duration, sub.getIdEpic());
         }else {
-            return String.format("%s,%s,%s,%s,%s", task.getId(), task.getType(),
-                    task.getTitle(), task.getStatus(), task.getDescription());
+            return String.format("%s,%s,%s,%s,%s,%s,%s", task.getId(), task.getType(),
+                    task.getTitle(), task.getStatus(), task.getDescription(), startTime, duration);
         }
     }
 
@@ -83,16 +88,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String title = str[2];
         StatusTask status = StatusTask.valueOf(str[3]);
         String description = str[4];
+        LocalDateTime startTime;
+        Duration duration;
+        if (str[5].equals("Не задано")) {
+            startTime = null;
+        }else {
+            startTime = LocalDateTime.parse(str[5], DATE_TIME_FORMATTER);
+        }
+
+        if (str[6].equals("Не задано")) {
+            duration = null;
+        }else {
+            duration = Duration.ofMinutes(Integer.parseInt(str[6]));
+        }
 
         if (TypeTask.TASK.toString().equals(str[1])) {
-            return new Task(id, type, title, status, description);
+                return new Task(id, type, title, status, description, startTime, duration);
 
         }else if (TypeTask.EPIC.toString().equals(str[1])) {
-            return new Epic(id, type, title, status, description);
+
+                return new Epic(id, type, title, status, description, startTime, duration);
 
         }else if (TypeTask.SUBTASK.toString().equals(str[1])) {
-            int idEpic = Integer.parseInt(str[5]);
-            return new SubTask(id, type, title, status, description, idEpic);
+            int idEpic = Integer.parseInt(str[7]);
+                return new SubTask(id, type, title, status, description, idEpic, startTime, duration);
         }
         return null;
     }
@@ -114,6 +133,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static void addSubTask(FileBackedTasksManager fb, SubTask task) {
         fb.getSubTasks().put(task.getId(), task);
         Epic currentEpic = fb.getEpics().get(task.getIdEpic());
+        fb.checkDurationEpic(currentEpic.getId());
+        fb.checkEndTimeEpic(currentEpic.getId());
+        fb.checkStartTimeEpic(currentEpic.getId());
         currentEpic.addSubTask(task);
     }
 

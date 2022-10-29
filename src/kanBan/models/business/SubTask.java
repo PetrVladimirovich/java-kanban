@@ -3,6 +3,8 @@ package kanBan.models.business;
 import kanBan.models.enums.StatusTask;
 import kanBan.models.enums.TypeTask;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -20,8 +22,8 @@ public class SubTask extends Task {
         this.type = TypeTask.SUBTASK;
     }
 
-    public SubTask(int id, TypeTask type, String title, StatusTask status, String description, int idEpic) {
-        super(id, type, title, status, description);
+    public SubTask(int id, TypeTask type, String title, StatusTask status, String description, int idEpic, LocalDateTime startTime, Duration duration) {
+        super(id, type, title, status, description, startTime, duration);
         this.idEpic = idEpic;
     }
 

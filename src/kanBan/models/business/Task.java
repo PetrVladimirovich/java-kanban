@@ -46,12 +46,14 @@ public class Task {
         this.duration = other.getDuration().get();
     }
 
-    public Task(int id, TypeTask type, String title, StatusTask status, String description) {
+    public Task(int id, TypeTask type, String title, StatusTask status, String description, LocalDateTime startTime, Duration duration) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.type = type;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public Task(String title, String description, String startTime, int duration) {

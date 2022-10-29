@@ -26,6 +26,7 @@ public class Main {
         tasksManager.printEpics();
         sub5.setStartTime(ldt);
         sub5.setDuration(dur);
+        tasksManager.deleteByIdentifier(4);
 
 
         tasksManager.updateSubTask(sub5);
