@@ -1,9 +1,9 @@
 id,type,name,status,description,startTime,duration,epic
 3,TASK,taskwe,NEW,qwe!231321312qwe,Не задано,Не задано,
-1,EPIC,firstTest,IN_PROGRESS,descripFirstTest,10:00 09.10.22,480,
+1,EPIC,firstTest,IN_PROGRESS,descripFirstTest,10:00 09.11.22,540,
 2,EPIC,SecondTest,NEW,descripSecondTest,Не задано,Не задано,
-4,SUBTASK,four,NEW,fourDesc,14:00 10.10.22,120,1,
-5,SUBTASK,five,IN_PROGRESS,fiveDesc,10:00 09.10.22,360,1,
-6,SUBTASK,six,DONE,sixDesc,Не задано,Не задано,1
+4,SUBTASK,four,NEW,fourDesc,14:00 10.11.22,120,1,
+5,SUBTASK,five,IN_PROGRESS,fiveDesc,10:00 09.11.22,360,1,
+6,SUBTASK,six,DONE,sixDesc,12:59 10.11.22,60,1
 
 6,2,4,5

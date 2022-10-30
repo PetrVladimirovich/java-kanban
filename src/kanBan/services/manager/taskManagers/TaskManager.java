@@ -1,9 +1,10 @@
 package kanBan.services.manager.taskManagers;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.List;
+import java.util.Set;
 import kanBan.models.business.*;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public interface TaskManager {
@@ -57,5 +58,7 @@ public interface TaskManager {
     void checkEndTimeEpic(int idEpic);
 
     void checkDurationEpic(int idEpic);
+
+    Set<Task> getPrioritizedTasks();
 
 }

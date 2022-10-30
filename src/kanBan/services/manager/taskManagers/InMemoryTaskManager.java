@@ -1,11 +1,9 @@
 package kanBan.services.manager.taskManagers;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.time.Duration;
-import java.util.List;
+
 import kanBan.models.business.*;
 import kanBan.models.enums.StatusTask;
 import kanBan.services.manager.historyManager.HistoryManager;
@@ -19,12 +17,63 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, SubTask> subTasks;
     private final Map<Integer, Epic> epics;
     private final HistoryManager history = Managers.getDefaultHistory();
+    private final Set<Task> sortedTasks;
+    private final Map<LocalDateTime, Boolean> employmentField;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epics = new HashMap<>();
+        sortedTasks = new TreeSet<>();
+        employmentField = getEmploymentField();
     }
+
+    private Map<LocalDateTime, Boolean> getEmploymentField() {
+        Map<LocalDateTime, Boolean> employmentСard  = new LinkedHashMap<>();
+        Duration oneYear = Duration.ofDays(365);
+        LocalDateTime startTime = LocalDateTime.of(2022, 11, 1, 0, 0);
+        LocalDateTime interval = LocalDateTime.of(2022, 11, 1, 0, 0);
+
+        while (interval.isBefore(startTime.plus(oneYear))) {
+            employmentСard.put(interval, false);
+            interval = interval.plusMinutes(15);
+        }
+
+        return employmentСard;
+    }
+
+    public boolean validateTimeEmployment(Task task) {
+        if (task.getStartTime().isPresent() && task.getEndTime().isPresent()) {
+            LocalDateTime taskTime = task.getStartTime().get();
+            LocalDateTime endTime = task.getEndTime().get();
+
+
+            for (LocalDateTime ldt : employmentField.keySet()) {
+                if ((taskTime.isBefore(ldt) || taskTime.isEqual(ldt)) && (endTime.isAfter(ldt) || endTime.isEqual(ldt))){
+                    if (employmentField.get(ldt).equals(true)) {
+                        return true;
+                    }else {
+                        employmentField.put(ldt, true);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void deleteEmploymentTime(Task task) {
+        if (task.getStartTime().isPresent() && task.getEndTime().isPresent()) {
+            LocalDateTime taskTime = task.getStartTime().get();
+            LocalDateTime endTime = task.getEndTime().get();
+            for (LocalDateTime ldt : employmentField.keySet()) {
+                if ((taskTime.isBefore(ldt) || taskTime.isEqual(ldt)) && (endTime.isAfter(ldt) || endTime.isEqual(ldt))) {
+                    employmentField.put(ldt, false);
+                }
+            }
+        }
+    }
+
 
     @Override
     public void checkStartTimeEpic(int idEpic) {
@@ -79,6 +128,11 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setDuration(duration);
             epics.put(epic.getId(), epic);
         }
+    }
+
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        return this.sortedTasks;
     }
 
     public HistoryManager getHistoryManager() {
@@ -207,11 +261,16 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println(ANSI_RED + "createTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
             return null;
         }
+        if (task.getStartTime().isPresent() && validateTimeEmployment(task)) {
+            System.out.println("Время занято другой задачей!");
+            return task;
+        }
         identifier++;
 
         task.setId(identifier);
 
         tasks.put(identifier, task);
+        sortedTasks.add(task);
 
         return task;
     }
@@ -238,12 +297,16 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println(ANSI_RED + "createSubTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
             return null;
         }
-
+        if (subTask.getStartTime().isPresent() && validateTimeEmployment(subTask)) {
+            System.out.println("Время занято другой задачей!");
+            return subTask;
+        }
         identifier++;
 
         subTask.setId(identifier);
 
         subTasks.put(identifier, subTask);
+        sortedTasks.add(subTask);
 
         Epic currentEpic = epics.get(subTask.getIdEpic());
         checkDurationEpic(currentEpic.getId());
@@ -275,6 +338,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer subTaskId : currentEpic.getSubTasksIds()) {
             if (subTasks.get(subTaskId).getIsStatus().equals(StatusTask.DONE)) {
                 countDone++;
+                deleteEmploymentTime(subTasks.get(subTaskId));
             }else if (subTasks.get(subTaskId).getIsStatus().equals(StatusTask.NEW)) {
                 countNew++;
             }
@@ -298,7 +362,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
+            deleteEmploymentTime(tasks.get(task.getId()));
+            if (task.getStartTime().isPresent() && validateTimeEmployment(task)) {
+                System.out.println("Время занято другой задачей!");
+                return;
+            }
             tasks.put(task.getId(), task);
+            sortedTasks.add(task);
             history.add(task);
         } else {
             System.out.println(ANSI_RED + "updateTask: --> Не могу обновить! Нету такой ТАСКИ! <--\n" + ANSI_RESET);
@@ -308,7 +378,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
         if (subTasks.containsKey(subTask.getId())) {
+            deleteEmploymentTime(subTasks.get(subTask.getId()));
+            if (subTask.getStartTime().isPresent() && validateTimeEmployment(subTask)) {
+                System.out.println("Время занято другой задачей!");
+                return;
+            }
             subTasks.put(subTask.getId(), subTask);
+            sortedTasks.add(subTask);
 
             Epic currentEpic = epics.get(subTask.getIdEpic());
 
@@ -339,12 +415,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteByIdentifier(int id) {
         if (tasks.containsKey(id)) {
+            sortedTasks.remove(tasks.get(id));
+            deleteEmploymentTime(tasks.get(id));
             tasks.remove(id);
             history.remove(id);
 
         } else if (subTasks.containsKey(id)) {
             int epicId = subTasks.get(id).getIdEpic();
             epics.get(epicId).deleteSubTasksIds(id);
+            deleteEmploymentTime(subTasks.get(id));
+            sortedTasks.remove(subTasks.get(id));
             subTasks.remove(id);
             checkDurationEpic(epicId);
             checkEndTimeEpic(epicId);
@@ -355,6 +435,8 @@ public class InMemoryTaskManager implements TaskManager {
             Epic currentEpic = epics.get(id);
 
             for (Integer idSubTask : currentEpic.getSubTasksIds()) {
+                deleteEmploymentTime(subTasks.get(idSubTask));
+                sortedTasks.remove(idSubTask);
                 subTasks.remove(idSubTask);
                 history.remove(idSubTask);
             }

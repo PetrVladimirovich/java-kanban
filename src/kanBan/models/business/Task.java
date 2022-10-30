@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class Task {
+public class Task implements Comparable<Task>{
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd.MM.yy");
     protected String title;
     protected String description;
@@ -18,6 +18,14 @@ public class Task {
     protected LocalDateTime startTime;
     protected Duration duration;
 
+    @Override
+    public int compareTo(Task o) {
+        if (this.startTime == null)
+            return 1;
+        if (o.startTime == null)
+            return -1;
+        return this.startTime.compareTo(o.startTime);
+    }
     public StatusTask getStatus() {
         return status;
     }
@@ -177,6 +185,8 @@ public class Task {
         return "    Задача " + title
                 + "   ID: " + id
                 + "    status: " + status
-                + "    Описание: [" + description + " ]\n";
+                + "    Описание: " + description
+                + "    Начало задачи: " + printStartTime()
+                + "    Продолжительсть: " + printDuration() + "\n";
     }
 }

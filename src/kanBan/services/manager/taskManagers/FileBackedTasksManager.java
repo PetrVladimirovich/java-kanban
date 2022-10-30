@@ -35,9 +35,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Epic epicTwo = man.createEpic(new Epic("SecondTest", "descripSecondTest"));
         Task taskONE = man.createTask(new Task("taskwe", "qwe!231321312qwe"));
 
-        man.createSubTask(new SubTask("four", "fourDesc", epicOne, "14:00 10.10.22", 120));
-        man.createSubTask(new SubTask("five", "fiveDesc", epicOne, "10:00 09.10.22", 360));
-        man.createSubTask(new SubTask("six", "sixDesc", epicOne));
+        man.createSubTask(new SubTask("four", "fourDesc", epicOne, "14:00 10.11.22", 120));
+        man.createSubTask(new SubTask("five", "fiveDesc", epicOne, "10:00 09.11.22", 360));
+        man.createSubTask(new SubTask("six", "sixDesc", epicOne, "12:59 10.11.22", 60));
         man.getSubTasks().get(6).setStatus(StatusTask.DONE);
         man.updateSubTask(man.getSubTasks().get(6));
         man.getBySubTaskId(4);
