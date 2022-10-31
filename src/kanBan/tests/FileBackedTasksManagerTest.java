@@ -1,0 +1,165 @@
+package kanBan.tests;
+
+import kanBan.models.business.*;
+import kanBan.models.enums.StatusTask;
+import kanBan.services.manager.Managers;
+import kanBan.services.manager.historyManager.HistoryManager;
+import kanBan.services.manager.taskManagers.FileBackedTasksManager;
+import kanBan.services.manager.taskManagers.TaskManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class FileBackedTasksManagerTest {
+
+    private FileBackedTasksManager taskManager;
+    private static final Path file = Paths.get("test.csv");
+    private int epic;
+    private int subTask1;
+    private int subTask2;
+    private int subTask3;
+
+
+    @BeforeEach
+    public void beforeEach() {
+        taskManager = new FileBackedTasksManager(file);
+        epic = taskManager.createEpic(new Epic("one", "oneDescription"));
+        subTask1 = taskManager.createSubTask(new SubTask("oneSubtask", "oneSubtask Description", taskManager.getEpics().get(epic))) ;
+        subTask2 = taskManager.createSubTask(new SubTask("twoSubtask", "twoSubtask Description", taskManager.getEpics().get(epic)));
+        subTask3 = taskManager.createSubTask(new SubTask("treeSubtask", "treeSubtask Description", taskManager.getEpics().get(epic)));
+    }
+
+    @Test
+    public void savingEmptyLists() {
+        final HistoryManager history = Managers.getDefaultHistory();
+
+        taskManager.deleteSubTasks();
+        final FileBackedTasksManager newFileBacked = FileBackedTasksManager.loadFromFile(file);
+
+
+
+        assertEquals(0, newFileBacked.getTasks().size());
+        assertEquals(0, newFileBacked.getHistory().size());
+        assertEquals(1, newFileBacked.getEpics().size());
+        assertEquals(0, newFileBacked.getSubTasks().size());
+    }
+
+    @Test
+    public void epicsWithNormalBehavior() {
+
+        final Map<Integer, Epic> epics = taskManager.getEpics();
+        final Epic savedEpic = taskManager.getByEpicId(1);
+
+        assertNotNull(savedEpic);
+        assertNotNull(epics);
+        assertEquals(1, epics.size());
+        assertEquals(savedEpic, epics.get(1));
+
+        taskManager.deleteEpics();
+        assertTrue(taskManager.getEpics().isEmpty());
+        assertTrue(taskManager.getSubTasks().isEmpty());
+
+        assertNull(taskManager.getByEpicId(1));
+    }
+
+    @Test
+    public void subTasksWithNormalBehavior() {
+        final Map<Integer, SubTask> subTasks = taskManager.getSubTasks();
+        final SubTask savedSubTask = taskManager.getBySubTaskId(2);
+
+        assertNotNull(savedSubTask);
+        assertNotNull(subTasks);
+        assertEquals(3, subTasks.size());
+        assertEquals(savedSubTask, subTasks.get(2));
+
+        taskManager.deleteSubTasks();
+        assertTrue(taskManager.getSubTasks().isEmpty());
+
+        assertNull(taskManager.getBySubTaskId(1));
+    }
+
+    @Test
+    public void tasksWithNormalBehavior() {
+        Task task = new Task("firstTask", "firstTask Description");
+        final int taskId = taskManager.createTask(task);
+
+        final Task savedTask = taskManager.getByTaskId(taskId);
+
+        assertNotNull(savedTask);
+        assertEquals(task, savedTask);
+
+        final Map<Integer, Task> tasks = taskManager.getTasks();
+
+        assertNotNull(tasks);
+        assertEquals(1, tasks.size());
+        assertEquals(task, tasks.get(5));
+
+        taskManager.deleteTasks();
+        assertTrue(taskManager.getTasks().isEmpty());
+
+        assertNull(taskManager.getByTaskId(1));
+    }
+
+    @Test
+    public void calculationOfEpicStatus() {
+        taskManager.checkStatusEpic(epic);
+        assertEquals(StatusTask.NEW, taskManager.getEpics().get(1).getStatus());
+
+        taskManager.getBySubTaskId(subTask1).setStatus(StatusTask.IN_PROGRESS);
+        taskManager.getBySubTaskId(subTask2).setStatus(StatusTask.NEW);
+        taskManager.getBySubTaskId(subTask3).setStatus(StatusTask.DONE);
+        taskManager.checkStatusEpic(epic);
+
+        assertEquals(StatusTask.IN_PROGRESS, taskManager.getEpics().get(1).getStatus());
+
+        taskManager.getBySubTaskId(subTask1).setStatus(StatusTask.DONE);
+        taskManager.getBySubTaskId(subTask2).setStatus(StatusTask.DONE);
+        taskManager.getBySubTaskId(subTask3).setStatus(StatusTask.DONE);
+        taskManager.checkStatusEpic(epic);
+
+        assertEquals(StatusTask.DONE, taskManager.getEpics().get(1).getStatus());
+
+        taskManager.getBySubTaskId(subTask1).setStatus(StatusTask.IN_PROGRESS);
+        taskManager.getBySubTaskId(subTask2).setStatus(StatusTask.IN_PROGRESS);
+        taskManager.getBySubTaskId(subTask3).setStatus(StatusTask.IN_PROGRESS);
+        taskManager.checkStatusEpic(epic);
+
+        assertEquals(StatusTask.IN_PROGRESS, taskManager.getEpics().get(1).getStatus());
+    }
+
+    @Test
+    public void checkPresenceOfAnEpic() {
+        final int idEpic = taskManager.getSubTasks().get(2).getIdEpic();
+        assertEquals(1, idEpic);
+    }
+
+    @Test
+    public void checkNormalTimeAndEndTime() {
+        taskManager.createSubTask(new SubTask("four", "fourDesc", taskManager.getEpics().get(epic), "14:00 10.11.22", 120));
+        taskManager.createSubTask(new SubTask("five", "fiveDesc", taskManager.getEpics().get(epic), "10:00 09.11.22", 360));
+        taskManager.createSubTask(new SubTask("six", "sixDesc", taskManager.getEpics().get(epic), "12:00 10.11.22", 60));
+
+        assertEquals("2022-11-09T10:00", taskManager.getEpics().get(epic).getStartTime().get().toString());
+        assertEquals("2022-11-10T16:00", taskManager.getEpics().get(epic).getEndTime().get().toString());
+    }
+
+    @Test
+    public void checkIntersectionOfTaskTimes() {
+        taskManager.createSubTask(new SubTask("four", "fourDesc", taskManager.getEpics().get(epic), "14:00 10.11.22", 120));
+        taskManager.createSubTask(new SubTask("five", "fiveDesc", taskManager.getEpics().get(epic), "10:00 09.11.22", 360));
+
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> taskManager.createSubTask(new SubTask("six", "sixDesc", taskManager.getEpics().get(epic), "13:30 10.11.22", 60))
+        );
+
+        assertEquals("Время занято другой задачей!", ex.getMessage());
+
+    }
+}

@@ -31,29 +31,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         Path pat = Paths.get("test.csv");
         FileBackedTasksManager man = new FileBackedTasksManager(pat);
-        Epic epicOne = man.createEpic(new Epic("firstTest", "descripFirstTest"));
-        Epic epicTwo = man.createEpic(new Epic("SecondTest", "descripSecondTest"));
-        Task taskONE = man.createTask(new Task("taskwe", "qwe!231321312qwe"));
+        int epic = man.createEpic(new Epic("one", "oneDescription"));
 
-        man.createSubTask(new SubTask("four", "fourDesc", epicOne, "14:00 10.11.22", 120));
-        man.createSubTask(new SubTask("five", "fiveDesc", epicOne, "10:00 09.11.22", 360));
-        man.createSubTask(new SubTask("six", "sixDesc", epicOne, "12:59 10.11.22", 60));
-        man.getSubTasks().get(6).setStatus(StatusTask.DONE);
-        man.updateSubTask(man.getSubTasks().get(6));
-        man.getBySubTaskId(4);
-        man.getSubTasks().get(5).setStatus(StatusTask.IN_PROGRESS);
-        man.updateSubTask(man.getSubTasks().get(5));
-        man.getByEpicId(2);
 
-        man.getBySubTaskId(4);
-        man.getBySubTaskId(5);
-        System.out.println("\n$$$$$$$$$Здесь закончилась запись )))$$$$$$\n");
-        FileBackedTasksManager qwe = FileBackedTasksManager.loadFromFile(pat);
-        qwe.printEpics();
-        qwe.printSubTasks();
-        qwe.printTasks();
-        System.out.println("===========================================\n\n");
-        System.out.println(qwe.getHistory());
     }
     private String toString(Task task) {
         String startTime = (task.getStartTime().isPresent()) ? task.getStartTime().get().format(DATE_TIME_FORMATTER) : "Не задано";
@@ -118,10 +98,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static List<Integer> historyFromString(String value) {
         List<Integer> historyIds = new LinkedList<>();
-        String[] str = value.split(",");
+        if (value.isEmpty()) {
+            String[] str = value.split(",");
 
-        for (String string : str) {
-            historyIds.add(Integer.parseInt(string));
+            for (String string : str) {
+                historyIds.add(Integer.parseInt(string));
+            }
         }
         return historyIds;
     }
@@ -154,7 +136,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     continue;
                 }
 
-                if (i == (str.length - 1)) {
+                if ((str.length > 2) && (i == (str.length - 1))) {
                     List<Integer> historyIds = historyFromString(str[i]);
 
                     for (Integer id : historyIds) {
@@ -177,7 +159,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     throw new ManagerSaveException("Труба!!!!");
                 }
                 if (task instanceof Epic) {
-                    addEpic(restoredTasksManager, (Epic)task);
+                    addEpic(restoredTasksManager, (Epic) task);
                 }else if (task instanceof SubTask) {
                     addSubTask(restoredTasksManager, (SubTask) task);
                 }else {
@@ -238,24 +220,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task createTask(Task task) {
-        super.createTask(task);
+    public int createTask(Task task) {
+        int taskId = super.createTask(task);
         save();
-        return task;
+        return taskId;
     }
 
     @Override
-    public SubTask createSubTask(SubTask subTask) {
-        super.createSubTask(subTask);
+    public int createSubTask(SubTask subTask) {
+        int taskId = super.createSubTask(subTask);
         save();
-        return subTask;
+        return taskId;
     }
 
     @Override
-    public Epic createEpic(Epic epic) {
-        super.createEpic(epic);
+    public int createEpic(Epic epic) {
+        int taskId = super.createEpic(epic);
         save();
-        return epic;
+        return taskId;
     }
 
     @Override

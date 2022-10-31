@@ -118,7 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (SubTask subTask : subTasks.values()) {
             if (subTask.getDuration().isEmpty() && (subTask.getIdEpic() == idEpic)) {
                 continue;
-            }else {
+            }else if (subTask.getDuration().isPresent()){
                 duration = duration.plus(subTask.getDuration().get());
             }
         }
@@ -203,6 +203,9 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         subTasks.clear();
+        for (Epic epic : epics.values()) {
+            epic.getSubTasksIds().clear();
+        }
     }
 
     @Override
@@ -212,6 +215,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         epics.clear();
+        subTasks.clear();
     }
 
     @Override
@@ -255,15 +259,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task createTask(Task task) {
+    public int createTask(Task task) {
         if (task == null) {
 
             System.out.println(ANSI_RED + "createTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
-            return null;
+            return -1;
         }
         if (task.getStartTime().isPresent() && validateTimeEmployment(task)) {
-            System.out.println("Время занято другой задачей!");
-            return task;
+            throw new IllegalArgumentException("Время занято другой задачей!");
         }
         identifier++;
 
@@ -272,14 +275,14 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.put(identifier, task);
         sortedTasks.add(task);
 
-        return task;
+        return task.getId();
     }
 
     @Override
-    public Epic createEpic(Epic epic) {
+    public int createEpic(Epic epic) {
         if (epic == null) {
             System.out.println(ANSI_RED + "createEpic: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
-            return null;
+            return -1;
         }
 
         identifier++;
@@ -288,18 +291,17 @@ public class InMemoryTaskManager implements TaskManager {
 
         epics.put(identifier, epic);
 
-        return epic;
+        return epic.getId();
     }
 
     @Override
-    public SubTask createSubTask(SubTask subTask) {
+    public int createSubTask(SubTask subTask) {
         if (subTask == null) {
             System.out.println(ANSI_RED + "createSubTask: --> Невозможно создать такой объект! <--\n" + ANSI_RESET);
-            return null;
+            return -1;
         }
         if (subTask.getStartTime().isPresent() && validateTimeEmployment(subTask)) {
-            System.out.println("Время занято другой задачей!");
-            return subTask;
+            throw new IllegalArgumentException("Время занято другой задачей!");
         }
         identifier++;
 
@@ -315,7 +317,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         currentEpic.addSubTask(subTask);
 
-        return subTask;
+        return subTask.getId();
     }
 
     @Override
