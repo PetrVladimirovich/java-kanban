@@ -34,19 +34,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         int epic = man.createEpic(new Epic("one", "oneDescription"));
 
 
-    }
-    private String toString(Task task) {
-        String startTime = (task.getStartTime().isPresent()) ? task.getStartTime().get().format(DATE_TIME_FORMATTER) : "Не задано";
-        String duration = (task.getDuration().isPresent()) ? String.valueOf(task.getDuration().get().toMinutes()) : "Не задано";
+        man.createSubTask(new SubTask("two", "twoDesc", man.getEpics().get(epic)));
+        man.createSubTask(new SubTask("tree", "treeDesc", man.getEpics().get(epic)));
+        man.createSubTask(new SubTask("four", "fourDesc", man.getEpics().get(epic)));
+        man.getSubTasks().get(4).setStatus(StatusTask.DONE);
+        man.updateSubTask(man.getSubTasks().get(4));
+        man.getBySubTaskId(2);
+        man.getSubTasks().get(3).setStatus(StatusTask.IN_PROGRESS);
+        man.updateSubTask(man.getSubTasks().get(3));
 
-        if (task instanceof SubTask) {
-            SubTask sub = (SubTask) task;
-            return String.format("%s,%s,%s,%s,%s,%s,%s,%s", sub.getId(), sub.getType(),
-                    sub.getTitle(), sub.getStatus(), sub.getDescription(), startTime, duration, sub.getIdEpic());
-        }else {
-            return String.format("%s,%s,%s,%s,%s,%s,%s", task.getId(), task.getType(),
-                    task.getTitle(), task.getStatus(), task.getDescription(), startTime, duration);
-        }
+
+        man.getBySubTaskId(4);
+        man.getBySubTaskId(4);
+        man.getBySubTaskId(2);
+        System.out.println("\n$$$$$$$$$Здесь закончилась запись )))$$$$$$\n");
+        FileBackedTasksManager qwe = FileBackedTasksManager.loadFromFile(pat);
+        qwe.printEpics();
+        qwe.printSubTasks();
+        qwe.printTasks();
+        System.out.println("===========================================\n\n");
+        System.out.println(qwe.getHistory());
+
     }
 
     private static String historyToString(HistoryManager manager) {
@@ -98,7 +106,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static List<Integer> historyFromString(String value) {
         List<Integer> historyIds = new LinkedList<>();
-        if (value.isEmpty()) {
+        if (!value.isEmpty()) {
             String[] str = value.split(",");
 
             for (String string : str) {
@@ -185,9 +193,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             int count = 1;
             for (Task task : taskSequence) {
                 if (count != taskSequence.size()) {
-                    writer.write(toString(task) + ",\n");
+                    writer.write(UtilTask.representForFile(task) + ",\n");
                 }else {
-                    writer.write(toString(task) + "\n\n");
+                    writer.write(UtilTask.representForFile(task) + "\n\n");
                 }
                 count++;
             }

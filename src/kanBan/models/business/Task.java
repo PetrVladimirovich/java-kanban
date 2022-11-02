@@ -50,8 +50,12 @@ public class Task implements Comparable<Task>{
         this.id = other.getId();
         this.status = other.getIsStatus();
         this.type = other.getType();
-        this.startTime = other.getStartTime().get();
-        this.duration = other.getDuration().get();
+        if (other.getStartTime().isPresent()) {
+            this.startTime = other.getStartTime().get();
+        }
+        if (other.getDuration().isPresent()) {
+            this.duration = other.getDuration().get();
+        }
     }
 
     public Task(int id, TypeTask type, String title, StatusTask status, String description, LocalDateTime startTime, Duration duration) {

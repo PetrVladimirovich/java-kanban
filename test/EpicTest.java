@@ -1,5 +1,3 @@
-package kanBan.tests;
-
 import kanBan.models.business.*;
 import kanBan.models.enums.*;
 import kanBan.services.manager.Managers;

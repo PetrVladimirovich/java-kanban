@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Set;
 import kanBan.models.business.*;
 import java.time.format.DateTimeFormatter;
+import java.util.TreeSet;
 
 public interface TaskManager {
-    static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd.MM.yy");
+    DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd.MM.yy");
     void printTasks();
 
     void printSubTasks();
@@ -49,7 +50,7 @@ public interface TaskManager {
 
     void deleteByIdentifier(int id);
 
-    Map<Integer, SubTask> getAllEpicSubTasks(Epic epic);
+    List<SubTask> getAllEpicSubTasks(Epic epic);
 
     List<Task> getHistory();
 
@@ -59,6 +60,6 @@ public interface TaskManager {
 
     void checkDurationEpic(int idEpic);
 
-    Set<Task> getPrioritizedTasks();
+    TreeSet<Task> getPrioritizedTasks();
 
 }

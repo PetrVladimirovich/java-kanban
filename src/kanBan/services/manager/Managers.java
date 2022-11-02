@@ -6,6 +6,7 @@ import kanBan.services.manager.taskManagers.InMemoryTaskManager;
 import kanBan.services.manager.taskManagers.TaskManager;
 
 public class Managers {
+    private Managers() { }
     public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }

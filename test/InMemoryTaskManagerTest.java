@@ -1,5 +1,3 @@
-package kanBan.tests;
-
 import kanBan.models.business.*;
 import kanBan.models.enums.StatusTask;
 import kanBan.services.manager.Managers;
@@ -7,6 +5,9 @@ import kanBan.services.manager.taskManagers.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -139,5 +140,32 @@ public class InMemoryTaskManagerTest {
 
         assertEquals("Время занято другой задачей!", ex.getMessage());
 
+    }
+
+    @Test
+    public void checkPrioritizedTasks() {
+        taskManager.createTask(new Task("five", "fiveDescription"));
+        taskManager.createTask(new Task("six", "sixDescription"));
+
+        assertEquals(taskManager.getSubTasks().get(2), taskManager.getPrioritizedTasks().first());
+        assertEquals(taskManager.getTasks().get(6), taskManager.getPrioritizedTasks().last());
+    }
+
+    @Test
+    public void checkGetAllEpicSubTasks() {
+        List<SubTask> testList = new ArrayList<>();
+        testList.add(new SubTask("oneSubtask", "oneSubtask Description", taskManager.getEpics().get(epic)));
+        testList.get(0).setId(2);
+        testList.add(new SubTask("twoSubtask", "twoSubtask Description", taskManager.getEpics().get(epic)));
+        testList.get(1).setId(3);
+        testList.add(new SubTask("treeSubtask", "treeSubtask Description", taskManager.getEpics().get(epic)));
+        testList.get(2).setId(4);
+
+
+        assertIterableEquals(testList, taskManager.getAllEpicSubTasks(taskManager.getByEpicId(epic)));
+
+        taskManager.deleteByIdentifier(3);
+        testList.remove(1);
+        assertIterableEquals(testList, taskManager.getAllEpicSubTasks(taskManager.getByEpicId(epic)));
     }
 }

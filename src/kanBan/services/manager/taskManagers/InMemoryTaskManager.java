@@ -10,15 +10,17 @@ import kanBan.services.manager.historyManager.HistoryManager;
 import kanBan.services.manager.Managers;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final String ANSI_RESET = "\u001B[0m";
-    private final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_RED = "\u001B[31m";
     private int identifier;
     private final Map<Integer, Task> tasks;
     private final Map<Integer, SubTask> subTasks;
     private final Map<Integer, Epic> epics;
     private final HistoryManager history = Managers.getDefaultHistory();
-    private final Set<Task> sortedTasks;
+    private final TreeSet<Task> sortedTasks;
     private final Map<LocalDateTime, Boolean> employmentField;
+    //для интервалов по 15 минут подумал что linkedHashMap так заполнив будет удобно,
+    //заполнение по 15 минут на год происходит в методе getEmploymentField()
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
@@ -131,7 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Set<Task> getPrioritizedTasks() {
+    public TreeSet<Task> getPrioritizedTasks() {
         return this.sortedTasks;
     }
 
@@ -451,18 +453,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<Integer, SubTask> getAllEpicSubTasks(Epic epic) {
-        Map<Integer, SubTask> subTasksEpic = new HashMap<>();
+    public List<SubTask> getAllEpicSubTasks(Epic epic) {
+        if (epic == null) {
+            System.out.println(ANSI_RED + "getAllEpicSubTasks: --> Нет такого Эпика! <--\n" + ANSI_RESET);
+        }
+
+        List<SubTask> subTasksEpic = new ArrayList<>();
 
         for (Epic epicTmp : epics.values()) {
             if (epicTmp.equals(epic)) {
                 for (Integer subTaskId : epicTmp.getSubTasksIds()) {
-                    subTasksEpic.put(subTaskId, subTasks.get(subTaskId));
+                    subTasksEpic.add(subTasks.get(subTaskId));
                 }
             }
         }
-        System.out.println(ANSI_RED + "getAllEpicSubTasks: --> Нет такого Эпика! <--\n" + ANSI_RESET);
 
-        return null;
+
+        return subTasksEpic;
     }
 }

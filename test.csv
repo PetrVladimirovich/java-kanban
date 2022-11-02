@@ -1,8 +1,7 @@
 id,type,name,status,description,startTime,duration,epic
-1,EPIC,one,NEW,oneDescription,10:00 09.11.22,480,
-2,SUBTASK,oneSubtask,NEW,oneSubtask Description,Не задано,Не задано,1,
-3,SUBTASK,twoSubtask,NEW,twoSubtask Description,Не задано,Не задано,1,
-4,SUBTASK,treeSubtask,NEW,treeSubtask Description,Не задано,Не задано,1,
-5,SUBTASK,four,NEW,fourDesc,14:00 10.11.22,120,1,
-6,SUBTASK,five,NEW,fiveDesc,10:00 09.11.22,360,1
+1,EPIC,one,IN_PROGRESS,oneDescription,Не задано,0,
+2,SUBTASK,two,NEW,twoDesc,Не задано,Не задано,1,
+3,SUBTASK,tree,IN_PROGRESS,treeDesc,Не задано,Не задано,1,
+4,SUBTASK,four,DONE,fourDesc,Не задано,Не задано,1
 
+3,4,2

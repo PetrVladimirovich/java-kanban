@@ -1,5 +1,3 @@
-package kanBan.tests;
-
 import kanBan.models.business.Epic;
 import kanBan.models.business.SubTask;
 import kanBan.models.business.Task;
