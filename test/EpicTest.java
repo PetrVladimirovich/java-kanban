@@ -1,6 +1,7 @@
 import kanBan.models.business.*;
 import kanBan.models.enums.*;
 import kanBan.services.manager.Managers;
+import kanBan.services.manager.taskManagers.InMemoryTaskManager;
 import kanBan.services.manager.taskManagers.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ class EpicTest {
 
     @BeforeEach
     public void beforeEach() {
-         taskManager = Managers.getDefault();
+         taskManager = new InMemoryTaskManager();
          idEpic = taskManager.createEpic(new Epic("one", "oneDescription"));
          taskManager.createSubTask(new SubTask("oneSubtask", "oneSubtask Description", taskManager.getEpics().get(idEpic))) ;
          taskManager.createSubTask(new SubTask("twoSubtask", "twoSubtask Description", taskManager.getEpics().get(idEpic)));

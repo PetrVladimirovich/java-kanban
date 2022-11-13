@@ -30,6 +30,10 @@ public class InMemoryTaskManager implements TaskManager {
         employmentField = getEmploymentField();
     }
 
+    public void setIdentifier(int id) {
+        this.identifier = id;
+    }
+
     private Map<LocalDateTime, Boolean> getEmploymentField() {
         Map<LocalDateTime, Boolean> employmentСard  = new LinkedHashMap<>();
         Duration oneYear = Duration.ofDays(365);
@@ -292,6 +296,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setId(identifier);
 
         epics.put(identifier, epic);
+        sortedTasks.add(epic);
 
         return epic.getId();
     }
@@ -460,11 +465,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         List<SubTask> subTasksEpic = new ArrayList<>();
 
-        for (Epic epicTmp : epics.values()) {
-            if (epicTmp.equals(epic)) {
-                for (Integer subTaskId : epicTmp.getSubTasksIds()) {
-                    subTasksEpic.add(subTasks.get(subTaskId));
-                }
+        for (SubTask sub : subTasks.values()) {
+            if (sub.getIdEpic() == epic.getId()) {
+                subTasksEpic.add(sub);
             }
         }
 

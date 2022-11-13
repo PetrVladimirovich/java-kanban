@@ -1,6 +1,7 @@
 import kanBan.models.business.*;
 import kanBan.models.enums.StatusTask;
 import kanBan.services.manager.Managers;
+import kanBan.services.manager.taskManagers.InMemoryTaskManager;
 import kanBan.services.manager.taskManagers.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class InMemoryTaskManagerTest {
 
     @BeforeEach
     public void beforeEach() {
-        taskManager = Managers.getDefault();
+        taskManager = new InMemoryTaskManager();
         epic = taskManager.createEpic(new Epic("one", "oneDescription"));
         subTask1 = taskManager.createSubTask(new SubTask("oneSubtask", "oneSubtask Description", taskManager.getEpics().get(epic))) ;
         subTask2 = taskManager.createSubTask(new SubTask("twoSubtask", "twoSubtask Description", taskManager.getEpics().get(epic)));
@@ -147,7 +148,7 @@ public class InMemoryTaskManagerTest {
         taskManager.createTask(new Task("five", "fiveDescription"));
         taskManager.createTask(new Task("six", "sixDescription"));
 
-        assertEquals(taskManager.getSubTasks().get(2), taskManager.getPrioritizedTasks().first());
+        assertEquals(taskManager.getEpics().get(1), taskManager.getPrioritizedTasks().first());
         assertEquals(taskManager.getTasks().get(6), taskManager.getPrioritizedTasks().last());
     }
 

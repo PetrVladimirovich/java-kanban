@@ -1,22 +1,34 @@
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import kanBan.models.business.*;
+
 import kanBan.models.enums.StatusTask;
 import kanBan.services.manager.Managers;
 import kanBan.services.manager.historyManager.HistoryManager;
 import kanBan.services.manager.taskManagers.FileBackedTasksManager;
+import kanBan.services.manager.taskManagers.HttpTaskManager;
+import kanBan.services.manager.taskManagers.InMemoryTaskManager;
+import kanBan.services.manager.taskManagers.TaskManager;
+import kanBan.web.HttpTaskServer;
+import kanBan.web.KVServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-public class FileBackedTasksManagerTest {
-
-    private FileBackedTasksManager taskManager;
+public class HttpTaskManagerTest {
+    private KVServer kvServer;
+    private TaskManager taskManager;
     private int epic;
     private int subTask1;
     private int subTask2;
@@ -24,12 +36,20 @@ public class FileBackedTasksManagerTest {
 
 
     @BeforeEach
-    public void beforeEach() {
-        taskManager = new FileBackedTasksManager("test.csv");
+    public void beforeEach() throws IOException, InterruptedException {
+        kvServer = new KVServer();
+        kvServer.start();
+        taskManager = Managers.getDefault();
+
         epic = taskManager.createEpic(new Epic("one", "oneDescription"));
         subTask1 = taskManager.createSubTask(new SubTask("oneSubtask", "oneSubtask Description", taskManager.getEpics().get(epic))) ;
         subTask2 = taskManager.createSubTask(new SubTask("twoSubtask", "twoSubtask Description", taskManager.getEpics().get(epic)));
         subTask3 = taskManager.createSubTask(new SubTask("treeSubtask", "treeSubtask Description", taskManager.getEpics().get(epic)));
+    }
+
+    @AfterEach
+    public void afterEach() {
+        kvServer.stop();
     }
 
     @Test
@@ -37,14 +57,14 @@ public class FileBackedTasksManagerTest {
         final HistoryManager history = Managers.getDefaultHistory();
 
         taskManager.deleteSubTasks();
-        final FileBackedTasksManager newFileBacked = FileBackedTasksManager.loadFromFile("test.csv");
+        final HttpTaskManager newHttpTaskManager = HttpTaskManager.loadFromServer("http://localhost:8078/", kvServer.getApiToken());
 
 
 
-        assertEquals(0, newFileBacked.getTasks().size());
-        assertEquals(0, newFileBacked.getHistory().size());
-        assertEquals(1, newFileBacked.getEpics().size());
-        assertEquals(0, newFileBacked.getSubTasks().size());
+        assertEquals(0, newHttpTaskManager.getTasks().size());
+        assertEquals(0, newHttpTaskManager.getHistory().size());
+        assertEquals(1, newHttpTaskManager.getEpics().size());
+        assertEquals(0, newHttpTaskManager.getSubTasks().size());
     }
 
     @Test

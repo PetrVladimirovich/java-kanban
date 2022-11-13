@@ -23,14 +23,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path file;
     private static final String HEADINGS_CSV = "id,type,name,status,description,startTime,duration,epic\n";
 
-    public FileBackedTasksManager(final Path file) {
+    public FileBackedTasksManager(final String pathFile) {
         super();
-        this.file = file;
+        this.file = Paths.get(pathFile);
+    }
+    public FileBackedTasksManager() {
+        super();
+        this.file = Paths.get("");
     }
 
     public static void main(String[] args) {
-        Path pat = Paths.get("test.csv");
-        FileBackedTasksManager man = new FileBackedTasksManager(pat);
+        FileBackedTasksManager man = new FileBackedTasksManager("test.csv");
         int epic = man.createEpic(new Epic("one", "oneDescription"));
 
 
@@ -48,7 +51,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         man.getBySubTaskId(4);
         man.getBySubTaskId(2);
         System.out.println("\n$$$$$$$$$Здесь закончилась запись )))$$$$$$\n");
-        FileBackedTasksManager qwe = FileBackedTasksManager.loadFromFile(pat);
+        FileBackedTasksManager qwe = FileBackedTasksManager.loadFromFile("test.csv");
         qwe.printEpics();
         qwe.printSubTasks();
         qwe.printTasks();
@@ -133,10 +136,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fb.getEpics().put(task.getId(), task);
     }
 
-    public static FileBackedTasksManager loadFromFile(final Path file) {
+    public static FileBackedTasksManager loadFromFile(final String pathFile) {
         try {
+            Path file = Paths.get(pathFile);
             String backInMemory = Files.readString(file);
-            FileBackedTasksManager restoredTasksManager = new FileBackedTasksManager(file);
+            FileBackedTasksManager restoredTasksManager = new FileBackedTasksManager(pathFile);
             String[] str = backInMemory.split("\n");
 
             for (int i = 1; i < str.length; i++) {
