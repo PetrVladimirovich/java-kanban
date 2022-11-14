@@ -1,7 +1,8 @@
 package kanBan.web;
 
 import com.google.gson.Gson;
-import com.sun.net.httpserver.*;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 import kanBan.models.business.Epic;
 import kanBan.models.business.SubTask;
 import kanBan.models.business.Task;
@@ -10,14 +11,13 @@ import kanBan.services.manager.taskManagers.TaskManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static kanBan.services.manager.consts.Constants.PORT;
 
 public class HttpTaskServer {
 
-    public static final int PORT = 8080;
     private HttpServer server;
     private Gson gson;
     public TaskManager httpTaskManager;
@@ -29,7 +29,7 @@ public class HttpTaskServer {
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.httpTaskManager = taskManager;
         this.server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        this.gson = Managers.getGson();
+        this.gson = Managers.buildGson();
 
         server.createContext("/tasks/task/", this::handleTask);
         server.createContext("/tasks/subtask/", this::handleSubTask);

@@ -32,7 +32,7 @@ public class HttpTaskServerTest {
         kvServer.start();
         httpTaskServer = new HttpTaskServer();
         httpTaskServer.start();
-        gson = Managers.getGson();
+        gson = Managers.buildGson();
 
         int epicTwo = httpTaskServer.httpTaskManager.createEpic(new Epic("SecondTest", "descripSecondTest"));
         int epicOne = httpTaskServer.httpTaskManager.createEpic(new Epic("firstTest", "descripFirstTest"));

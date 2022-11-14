@@ -1,6 +1,7 @@
 package kanBan;
 
 import kanBan.models.business.*;
+import kanBan.services.manager.Managers;
 import kanBan.web.HttpTaskServer;
 import kanBan.web.KVServer;
 
@@ -9,7 +10,7 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        KVServer kvServer = new KVServer();
+        KVServer kvServer = Managers.getDefaultKVServer();
         kvServer.start();
         System.out.println("KV сервер запущен!");
         HttpTaskServer httpTaskServer = new HttpTaskServer();
@@ -45,7 +46,6 @@ public class Main {
         System.out.println(httpTaskServer.httpTaskManager.getHistory());
         httpTaskServer.httpTaskManager.getBySubTaskId(4);
         System.out.println(httpTaskServer.httpTaskManager.getHistory());
-        System.out.println(httpTaskServer.httpTaskManager.getAllEpicSubTasks(httpTaskServer.httpTaskManager.getByEpicId(1)));
 
     }
 }

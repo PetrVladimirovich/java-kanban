@@ -1,26 +1,17 @@
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import kanBan.models.business.*;
 
 import kanBan.models.enums.StatusTask;
 import kanBan.services.manager.Managers;
+import kanBan.services.manager.consts.Constants;
 import kanBan.services.manager.historyManager.HistoryManager;
-import kanBan.services.manager.taskManagers.FileBackedTasksManager;
 import kanBan.services.manager.taskManagers.HttpTaskManager;
-import kanBan.services.manager.taskManagers.InMemoryTaskManager;
 import kanBan.services.manager.taskManagers.TaskManager;
-import kanBan.web.HttpTaskServer;
 import kanBan.web.KVServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +27,7 @@ public class HttpTaskManagerTest {
 
 
     @BeforeEach
-    public void beforeEach() throws IOException, InterruptedException {
+    public void beforeEach() throws IOException {
         kvServer = new KVServer();
         kvServer.start();
         taskManager = Managers.getDefault();
@@ -57,7 +48,7 @@ public class HttpTaskManagerTest {
         final HistoryManager history = Managers.getDefaultHistory();
 
         taskManager.deleteSubTasks();
-        final HttpTaskManager newHttpTaskManager = HttpTaskManager.loadFromServer("http://localhost:8078/", kvServer.getApiToken());
+        final HttpTaskManager newHttpTaskManager = HttpTaskManager.loadFromServer(Constants.getAddressKVServices(), kvServer.getApiToken());
 
 
 

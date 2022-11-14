@@ -9,8 +9,8 @@ import java.net.http.HttpResponse;
 public class KVTaskClient {
     private final String url;
     private String apiToken;
-    HttpClient httpClient = HttpClient.newHttpClient();
-    HttpRequest request;
+    private HttpClient httpClient = HttpClient.newHttpClient();
+    private HttpRequest request;
 
     public KVTaskClient(String url){
         this.url = url;
