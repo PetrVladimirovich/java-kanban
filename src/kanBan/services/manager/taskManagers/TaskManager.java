@@ -3,11 +3,10 @@ package kanBan.services.manager.taskManagers;
 import java.util.Map;
 import java.util.List;;
 import kanBan.models.business.*;
-import java.time.format.DateTimeFormatter;
 import java.util.TreeSet;
 
 public interface TaskManager {
-    DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd.MM.yy");
+
     void printTasks();
 
     void printSubTasks();

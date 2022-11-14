@@ -5,11 +5,10 @@ import kanBan.models.enums.StatusTask;
 import kanBan.models.enums.TypeTask;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import static kanBan.services.manager.consts.Constants.DATE_TIME_FORMATTER;
 import java.util.Optional;
 
 public class Task implements Comparable<Task>{
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm dd.MM.yy");
     protected String title;
     protected String description;
     protected int id;

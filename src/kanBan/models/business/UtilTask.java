@@ -1,6 +1,6 @@
 package kanBan.models.business;
 
-import static kanBan.services.manager.taskManagers.TaskManager.DATE_TIME_FORMATTER;
+import static kanBan.services.manager.consts.Constants.DATE_TIME_FORMATTER;
 
 public class UtilTask {
 
