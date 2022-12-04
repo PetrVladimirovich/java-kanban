@@ -41,8 +41,6 @@ public class Main {
         System.out.println(tasksManager.getHistory());
         tasksManager.getBySubTaskId(4);
         tasksManager.deleteByIdentifier(2);
-        System.out.println(tasksManager.getHistory());
-        System.out.println(tasksManager.getAllEpicSubTasks(tasksManager.getByEpicId(1)));
 
     }
 }
